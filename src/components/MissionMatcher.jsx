@@ -1,11 +1,8 @@
 import { useTheme } from "@emotion/react";
 import { Box, Button, TextField, Typography } from "@mui/material"
 import { DataGrid } from "@mui/x-data-grid";
-import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
-import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import { tokens } from "../theme";
-
+import PropTypes from 'prop-types';
 
 
 const MissionMatcher = ({keyword, identified, cannotid }) => {
@@ -216,5 +213,11 @@ const MissionMatcher = ({keyword, identified, cannotid }) => {
         </>
     )
 };
+
+MissionMatcher.propTypes = {
+    keyword: PropTypes.string,
+    identified: PropTypes.array,
+    cannotid: PropTypes.array,
+}
 
 export default MissionMatcher;

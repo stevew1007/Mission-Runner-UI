@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from 'react';
 import ApiClient from '../ApiClient';
+import PropTypes from 'prop-types';
 
 const globalContext = createContext();
 
@@ -28,4 +29,8 @@ export default GlobalProvider
 
 export function useGlobal() {
     return useContext(globalContext)
+}
+
+GlobalProvider.propTypes = {
+    children: PropTypes.any
 }

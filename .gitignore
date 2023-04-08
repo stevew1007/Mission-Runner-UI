@@ -102,6 +102,9 @@ typings/
 # Next.js build output
 .next
 
+# Vite.js build output
+.vite
+
 # Nuxt.js build / generate output
 .nuxt
 dist
@@ -126,3 +129,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Husky files
+.husky
+

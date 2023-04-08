@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback } from 'react';
+import PropTypes from 'prop-types';
 
 export const FlashContext = createContext();
 let flashTimer;
@@ -32,4 +33,8 @@ export default function FlashProvider({ children }) {
 
 export function useFlash() {
   return useContext(FlashContext).flash;
+}
+
+FlashProvider.propTypes = {
+  children: PropTypes.any
 }

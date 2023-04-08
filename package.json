@@ -8,7 +8,7 @@
         "build": "vite build",
         "preview": "vite preview",
         "prepare": "husky install",
-        "lint": "eslint --init",
+        "lint": "eslint .",
         "lint:fix": "eslint . --fix"
     },
     "dependencies": {

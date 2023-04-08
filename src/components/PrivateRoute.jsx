@@ -1,5 +1,6 @@
 import { useLocation, Navigate } from "react-router-dom";
 import { useUser } from "../contexts/UserProvider";
+import PropTypes from 'prop-types';
 
 export default function PrivateRoute({ children }) {
     const { user } = useUser();
@@ -13,4 +14,8 @@ export default function PrivateRoute({ children }) {
         const url = location.pathname + location.search + location.hash;
         return <Navigate to="/login" state={{ next: url }} />;
     }
+}
+
+PrivateRoute.propTypes = {
+    children: PropTypes.any
 }
