@@ -1,6 +1,6 @@
 # Mission Runner UI
 
-A react application that work with the [Mission Runner API](https://github.com/stevew1007/Mission-Runner-API）
+A react application that work with the [Mission Runner API](https://github.com/stevew1007/Mission-Runner-API).
 
 This program is still a work in progress. Please use with causion.
 
