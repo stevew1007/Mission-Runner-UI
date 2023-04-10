@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useGlobal } from "./GlobalProvider";
+import PropTypes from 'prop-types';
 
 const UserContext = createContext();
 
@@ -22,7 +23,9 @@ export default function UserProvider({ children }) {
         const result = await api.login(username, password);
         if (result === "ok") {
             const response = await api.get("/me");
-            setUser(response.ok ? response.body : null);
+            // console.log(user)
+            setUser(response.ok ? {...response.body, background:'#'+(0x1000000+Math.random()*0xffffff).toString(16).substr(1,6)} : null);
+            console.log(user)
             return response.ok;
         }
         return result;
@@ -42,4 +45,8 @@ export default function UserProvider({ children }) {
 
 export function useUser() {
     return useContext(UserContext);
+}
+
+UserProvider.propTypes = {
+    children: PropTypes.any
 }

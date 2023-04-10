@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, redirect } from "react-router-dom";
 import {
     Stack,
     IconButton,
@@ -20,12 +20,12 @@ const loginSchema = yup.object().shape({
     password: yup.string().required("Password is required."),
 });
 
-const initialValuesRegister = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-};
+// const initialValuesRegister = {
+//     firstName: "",
+//     lastName: "",
+//     email: "",
+//     password: "",
+// };
 
 const initialValuesLogin = {
     username: "",
@@ -33,29 +33,21 @@ const initialValuesLogin = {
 };
 
 const Form = () => {
-    // const { api } = useGlobal();
     const { login } = useUser();
     const flash = useFlash();
-    const location = useLocation();
+    // const location = useLocation();
 
     const handleFormSubmit = async (values, onSubmit) => {
         // print username & pssword to console for debug
         onSubmit.setSubmitting(true);
-        console.log(values.username, values.password);
         const result = await login(values.username, values.password);
         if (result === 'fail') {
             onSubmit.setSubmitting(false);
             onSubmit.setFieldValue("password", "", false);
             flash("用户名或密码错误", "error", 10);
         } else {
-            
-            onSubmit.setSubmitting(false);
             flash("登录成功", "success");
-            let next = '/dashboard';
-            if (location.state && location.state.next) {
-                next = location.state.next
-            }
-            Navigate(next)
+            formik.setSubmitting(false)
         }
     };
 
@@ -126,6 +118,7 @@ const Form = () => {
                         variant="contained"
                         fullWidth
                         type="submit"
+                        loading={formik.isSubmitting}
                     >
                         Submit
                     </LoadingButton>

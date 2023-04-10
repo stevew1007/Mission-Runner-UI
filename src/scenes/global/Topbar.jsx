@@ -12,6 +12,10 @@ import {
     Divider,
     styled,
     Link,
+    Tooltip,
+    Avatar,
+    Menu,
+    MenuItem,
 } from "@mui/material";
 import { tokens } from "../../theme";
 import InputBase from "@mui/material/InputBase";
@@ -19,12 +23,13 @@ import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import { NavLink } from "react-router-dom";
-// import { useDispatch, useSelector } from "react-redux";
 import { useGlobal } from "../../contexts/GlobalProvider";
-import { setMode, setSideBar } from "../../state";
+import { useUser } from "../../contexts/UserProvider";
+import PropTypes from "prop-types";
+import { useState } from "react";
 
 const drawerWidth = 240;
 
@@ -51,6 +56,15 @@ const Topbar = ({ children }) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const { toggleMode, sidebarOpened, toggleSidebar } = useGlobal();
+    const { user, logout } = useUser();
+    const [anchorEl, setAnchorEl] = useState();
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -68,10 +82,7 @@ const Topbar = ({ children }) => {
                 >
                     {/* Titles */}
                     <Box display="flex" alignItems="center">
-                        <Link 
-                            underline="none"
-                            onClick={() => toggleSidebar()}
-                        >
+                        <Link underline="none" onClick={() => toggleSidebar()}>
                             <Typography
                                 variant="h4"
                                 fontWeight="bold"
@@ -99,7 +110,7 @@ const Topbar = ({ children }) => {
                                 <SearchIcon />
                             </IconButton>
                         </Box>
-                        <IconButton onClick={() => dispatch(setMode())}>
+                        <IconButton onClick={() => toggleMode()}>
                             {theme.palette.mode === "dark" ? (
                                 <DarkModeOutlinedIcon />
                             ) : (
@@ -109,12 +120,81 @@ const Topbar = ({ children }) => {
                         <IconButton>
                             <NotificationsOutlinedIcon />
                         </IconButton>
-                        <IconButton>
-                            <SettingsOutlinedIcon />
-                        </IconButton>
-                        <IconButton>
-                            <PersonOutlineOutlinedIcon />
-                        </IconButton>
+                        <Tooltip title="Account settings">
+                            <IconButton
+                                onClick={handleClick}
+                                size="small"
+                                // sx={{ ml: 2 }}
+                                aria-controls={
+                                    open ? "account-menu" : undefined
+                                }
+                                aria-haspopup="true"
+                                aria-expanded={open ? "true" : undefined}
+                            >
+                                <Avatar
+                                    sx={{
+                                        width: 32,
+                                        height: 32,
+                                        bgcolor: user.background,
+                                    }}
+                                >
+                                    {user.username != undefined
+                                        ? user.username[0].toUpperCase()
+                                        : ""}
+                                </Avatar>
+                            </IconButton>
+                        </Tooltip>
+                        <Menu
+                            anchorEl={anchorEl}
+                            id="account-menu"
+                            open={open}
+                            onClose={handleClose}
+                            onClick={handleClose}
+                            PaperProps={{
+                                elevation: 0,
+                                sx: {
+                                    overflow: "visible",
+                                    filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                                    mt: 1.5,
+                                    "& .MuiAvatar-root": {
+                                        width: 32,
+                                        height: 32,
+                                        ml: -0.5,
+                                        mr: 1,
+                                    },
+                                    "&:before": {
+                                        content: '""',
+                                        display: "block",
+                                        position: "absolute",
+                                        top: 0,
+                                        right: 14,
+                                        width: 10,
+                                        height: 10,
+                                        bgcolor: "background.paper",
+                                        transform:
+                                            "translateY(-50%) rotate(45deg)",
+                                        zIndex: 0,
+                                    },
+                                },
+                            }}
+                            transformOrigin={{
+                                horizontal: "right",
+                                vertical: "top",
+                            }}
+                            anchorOrigin={{
+                                horizontal: "right",
+                                vertical: "bottom",
+                            }}
+                        >
+                            <MenuItem>
+                                <SettingsOutlinedIcon />
+                                <Typography ml={1}>Setting</Typography>
+                            </MenuItem>
+                            <MenuItem onClick={logout}>
+                                <LogoutOutlinedIcon />
+                                <Typography ml={1}>Logout</Typography>
+                            </MenuItem>
+                        </Menu>
                     </Box>
                 </Toolbar>
             </AppBar>
@@ -200,3 +280,7 @@ const Topbar = ({ children }) => {
 };
 
 export default Topbar;
+
+Topbar.propTypes = {
+    children: PropTypes.any,
+};
