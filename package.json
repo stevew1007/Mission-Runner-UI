@@ -1,47 +1,67 @@
 {
-    "name": "mission-runner-ui",
-    "private": true,
-    "version": "0.0.1",
-    "type": "module",
-    "scripts": {
-        "dev": "vite",
-        "build": "vite build",
-        "preview": "vite preview",
-        "prepare": "husky install",
-        "lint": "eslint .",
-        "lint:fix": "eslint . --fix",
-        "commit": "cz"
-    },
-    "dependencies": {
-        "@emotion/react": "^11.10.6",
-        "@emotion/styled": "^11.10.6",
-        "@mui/icons-material": "^5.11.11",
-        "@mui/lab": "^5.0.0-alpha.125",
-        "@mui/material": "^5.11.15",
-        "@mui/x-data-grid": "^6.0.4",
-        "@reduxjs/toolkit": "^1.9.3",
-        "formik": "^2.2.9",
-        "moment": "^2.29.4",
-        "react": "^18.2.0",
-        "react-dom": "^18.2.0",
-        "react-redux": "^8.0.5",
-        "react-router-dom": "^6.10.0",
-        "yup": "^1.0.2"
-    },
-    "devDependencies": {
-        "@types/react": "^18.0.28",
-        "@types/react-dom": "^18.0.11",
-        "@vitejs/plugin-react": "^3.1.0",
-        "commitizen": "^4.3.0",
-        "cz-conventional-changelog": "^3.3.0",
-        "eslint": "^8.38.0",
-        "eslint-plugin-react": "^7.32.2",
-        "husky": "^8.0.0",
-        "vite": "^4.2.0"
-    },
-    "config": {
-        "commitizen": {
-            "path": "./node_modules/cz-conventional-changelog"
-        }
+  "name": "mission-runner-ui",
+  "private": true,
+  "version": "0.0.0-development",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "prepare": "husky install",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "commit": "cz",
+    "semantic-release": "semantic-release"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/icons-material": "^5.11.11",
+    "@mui/lab": "^5.0.0-alpha.125",
+    "@mui/material": "^5.11.15",
+    "@mui/x-data-grid": "^6.0.4",
+    "@reduxjs/toolkit": "^1.9.3",
+    "formik": "^2.2.9",
+    "moment": "^2.29.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^8.0.5",
+    "react-router-dom": "^6.10.0",
+    "yup": "^1.0.2"
+  },
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@vitejs/plugin-react": "^3.1.0",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.38.0",
+    "eslint-plugin-react": "^7.32.2",
+    "husky": "^8.0.0",
+    "semantic-release": "^21.0.1",
+    "vite": "^4.2.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stevew1007/Mission-Runner-UI.git"
+  },
+  "release": {
+    "branches": [
+      "+([0-9])?(.{+([0-9]),x}).x",
+      "main",
+      "develop/*"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/changelog",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/github"
+    ]
+  }
 }
