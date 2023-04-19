@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { useLocation, redirect } from "react-router-dom";
+import { useState } from "react";
 import {
     Stack,
     IconButton,
@@ -35,7 +34,6 @@ const initialValuesLogin = {
 const Form = () => {
     const { login } = useUser();
     const flash = useFlash();
-    // const location = useLocation();
 
     const handleFormSubmit = async (values, onSubmit) => {
         // print username & pssword to console for debug
@@ -45,9 +43,15 @@ const Form = () => {
             onSubmit.setSubmitting(false);
             onSubmit.setFieldValue("password", "", false);
             flash("用户名或密码错误", "error", 10);
-        } else {
+        } 
+        if (result === 'ok') {
             flash("登录成功", "success");
-            formik.setSubmitting(false)
+            formik.setSubmitting(false);
+            
+        } else {
+            flash(`HTTP错误: ${result}, 请重试`, "error", 10);
+            onSubmit.setSubmitting(false);
+            
         }
     };
 

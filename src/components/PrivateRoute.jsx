@@ -7,12 +7,13 @@ export default function PrivateRoute({ children }) {
     const location = useLocation();
 
     if (user === undefined) {
-        return null;
+        const url = location.pathname + location.search + location.hash;
+        return <Navigate to="/login" state={{ next: url }} />;
     } else if (user) {
         return children;
     } else {
         const url = location.pathname + location.search + location.hash;
-        return <Navigate to="/login" state={{ next: url }} />;
+        return <Navigate to="/dashboard" state={{ next: url }} />;
     }
 }
 

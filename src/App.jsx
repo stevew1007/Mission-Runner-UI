@@ -5,6 +5,7 @@ import Publishing from "./scenes/publishing";
 import Running from "./scenes/running";
 import Inprogress from "./scenes/inprogress";
 import Completeing from "./scenes/completing";
+import Account from "./scenes/account";
 import { Routes, Route } from "react-router-dom";
 import { useGlobal } from "./contexts/GlobalProvider";
 import { useMemo } from "react";
@@ -54,6 +55,10 @@ function App() {
                                         <Route
                                             path="/completing"
                                             element={<Completeing />}
+                                        />
+                                        <Route
+                                            path="/account"
+                                            element={<Account />}
                                         />
                                     </Routes>
                                 </PrivateRoute>

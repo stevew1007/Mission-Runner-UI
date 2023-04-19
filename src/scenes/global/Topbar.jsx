@@ -224,6 +224,7 @@ const Topbar = ({ children }) => {
                                 统计数据
                             </ListItemButton>
                         </ListItem>
+                        
                         <ListItem disablePadding>
                             <ListItemButton
                                 component={NavLink}
@@ -248,6 +249,11 @@ const Topbar = ({ children }) => {
                         </ListItem>
                         <ListItem disablePadding>
                             <ListItemButton>费用结算</ListItemButton>
+                        </ListItem>
+                        <ListItem disablePadding>
+                            <ListItemButton component={NavLink} to="/account">
+                                声望号
+                            </ListItemButton>
                         </ListItem>
                     </List>
                     <Divider />

@@ -61,11 +61,11 @@ export default class ApiClient {
   async login(username, password) {
     const response = await this.post('/tokens', null, {
       headers: {
-        Authorization:  'Basic ' + btoa(username + ":" + password)
+        Authorization:  'Basic ' + btoa(username + ":" + password) 
       }
     });
     if (!response.ok) {
-      return response.status === 401 ? 'fail' : 'error';
+      return response.status === 401 ? 'fail' : response.status;
     }
     localStorage.setItem('accessToken', response.body.access_token);
     return 'ok';

@@ -133,3 +133,5 @@ dist
 # Husky files
 .husky
 
+# vscode files
+.vscode

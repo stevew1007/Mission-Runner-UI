@@ -9,7 +9,8 @@
         "preview": "vite preview",
         "prepare": "husky install",
         "lint": "eslint .",
-        "lint:fix": "eslint . --fix"
+        "lint:fix": "eslint . --fix",
+        "commit": "cz"
     },
     "dependencies": {
         "@emotion/react": "^11.10.6",
@@ -20,10 +21,9 @@
         "@mui/x-data-grid": "^6.0.4",
         "@reduxjs/toolkit": "^1.9.3",
         "formik": "^2.2.9",
+        "moment": "^2.29.4",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
-        "react-dropzone": "^14.2.3",
-        "react-pro-sidebar": "^1.0.0",
         "react-redux": "^8.0.5",
         "react-router-dom": "^6.10.0",
         "yup": "^1.0.2"
@@ -32,6 +32,7 @@
         "@types/react": "^18.0.28",
         "@types/react-dom": "^18.0.11",
         "@vitejs/plugin-react": "^3.1.0",
+        "commitizen": "^4.3.0",
         "cz-conventional-changelog": "^3.3.0",
         "eslint": "^8.38.0",
         "eslint-plugin-react": "^7.32.2",
