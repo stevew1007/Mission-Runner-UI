@@ -9,11 +9,12 @@ import {
     IconButton,
 } from "@mui/material";
 import { tokens } from "../../theme";
-import Form from "./form";
+import Form from "./loginform";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import { useGlobal } from "../../contexts/GlobalProvider";
 import FlashMessage from "../../components/FlashMessage";
+import LoginForm from "./loginform";
 
 const StyledContent = styled("div")(({ theme }) => ({
     maxWidth: 480,
@@ -80,8 +81,7 @@ const LoginPage = () => {
                     没有账号？
                     <Link variant="subtitle2">注册</Link>
                 </Typography>
-                <FlashMessage />
-                <Form />
+                <LoginForm />
             </StyledContent>
         </Box>
     );

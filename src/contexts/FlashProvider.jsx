@@ -12,7 +12,7 @@ export default function FlashProvider({ children }) {
     setVisible(false);
   }, []);
 
-  const flash = useCallback((message, type, duration = 10) => {
+  const flash = (message, type, duration = 10) => {
     if (flashTimer) {
       clearTimeout(flashTimer);
       flashTimer = undefined;
@@ -22,7 +22,7 @@ export default function FlashProvider({ children }) {
     if (duration) {
       flashTimer = setTimeout(hideFlash, duration * 1000);
     }
-  }, [hideFlash]);
+  };
 
   return (
     <FlashContext.Provider value={{flash, hideFlash, flashMessage, visible}}>

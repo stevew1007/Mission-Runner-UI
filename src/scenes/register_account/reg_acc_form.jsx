@@ -3,6 +3,9 @@ import {
     IconButton,
     InputAdornment,
     TextField,
+    Box,
+    Checkbox,
+    Typography,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useFormik } from "formik";
@@ -13,40 +16,49 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useUser } from "../../contexts/UserProvider";
 import { useGlobal } from "../../contexts/GlobalProvider";
 import { useFlash } from "../../contexts/FlashProvider";
+import { useNavigate } from "react-router-dom";
 
 const loginSchema = yup.object().shape({
-    name: yup.string().required("Account name is required"),
-    lp_point: yup.integer()
+    name: yup.string().required("角色名不能为空"),
+    lp_point: yup.number(),
 });
 
 const initialValues = {
     name: "",
-    lp_point: "",
+    lp_point: 0,
+    continue: false
 };
 
-const Form = () => {
-    const { login } = useUser();
+const RegisterAccountForm = () => {
+    // const { login } = useUser();
     const { api } = useGlobal();
     const flash = useFlash();
+    const navigate = useNavigate();
 
     const handleFormSubmit = async (values, onSubmit) => {
         // print username & pssword to console for debug
         onSubmit.setSubmitting(true);
-        // const result = await api.post("/accounts", values);
-        // if (result === 'fail') {
-        //     onSubmit.setSubmitting(false);
-        //     onSubmit.setFieldValue("password", "", false);
-        //     flash("用户名或密码错误", "error", 10);
-        // } 
-        // if (result === 'ok') {
-        //     flash("登录成功", "success");
-        //     formik.setSubmitting(false);
-            
-        // } else {
-        //     flash(`HTTP错误: ${result}, 请重试`, "error", 10);
-        //     onSubmit.setSubmitting(false);
-            
-        // }
+        let sending = {
+            name: values.name,
+            lp_point: values.lp_point,
+        }
+        const result = await api.post("/accounts", sending);
+        if (!result.ok) {
+            onSubmit.setSubmitting(false);
+            flash(`注册出错 HTTP : ${result.status}, 请重试`, "error", 10);
+        }
+        else  {
+            flash("注册成功", "success");
+            formik.setValues(initialValues);
+            formik.setSubmitting(false);
+            if (values.continue) {
+                formik.setValues(initialValues);
+            } 
+            else {
+                navigate("/account");
+            }
+
+        }
     };
 
     const formik = useFormik({
@@ -56,7 +68,7 @@ const Form = () => {
     });
 
     return (
-        <div>
+        <Box mt='10px'>
             <form onSubmit={formik.handleSubmit}>
                 <Stack spacing={1}>
                     <TextField
@@ -67,11 +79,12 @@ const Form = () => {
                         value={formik.values.name}
                         onChange={formik.handleChange}
                         error={
-                            formik.touched.password && formik.errors.password
+                            formik.touched.name && formik.errors.name
                         }
                         helperText={
-                            formik.touched.username && formik.errors.username
-                            ? formik.errors.username : " "
+                            formik.touched.name && formik.errors.name
+                                ? formik.errors.name
+                                : " "
                         }
                     />
                     <TextField
@@ -83,31 +96,13 @@ const Form = () => {
                         onBlur={formik.handleBlur}
                         onChange={formik.handleChange}
                         error={
-                            formik.touched.password && formik.errors.password
+                            formik.touched.lp_point && formik.errors.lp_point
                         }
-                        helperText={
-                            formik.touched.password && formik.errors.password
-                            ? formik.errors.password : " "
-                        }
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        onClick={() =>
-                                            setShowPassword(!showPassword)
-                                        }
-                                        edge="end"
-                                    >
-                                        {showPassword === true ? (
-                                            <VisibilityIcon />
-                                        ) : (
-                                            <VisibilityOffIcon />
-                                        )}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
                     />
+                    <Box display="flex" alignItems="center">
+                        <Checkbox name="continue" size="small" />
+                        <Typography>继续登记下一个角色</Typography>
+                    </Box>
                     <LoadingButton
                         color="success"
                         variant="contained"
@@ -119,8 +114,8 @@ const Form = () => {
                     </LoadingButton>
                 </Stack>
             </form>
-        </div>
+        </Box>
     );
 };
 
-export default Form;
+export default RegisterAccountForm;

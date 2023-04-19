@@ -21,7 +21,7 @@ export default function UserProvider({ children }) {
 
     const login = async (username, password) => {
         const result = await api.login(username, password);
-        if (result === "ok") {
+        if (result === 'ok') {
             const response = await api.get("/me");
             setUser(response.ok ? {...response.body, background:'#'+(0x1000000+Math.random()*0xffffff).toString(16).substr(1,6)} : null);
             return response.ok;

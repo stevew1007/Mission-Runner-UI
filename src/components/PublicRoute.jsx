@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useUser } from "../contexts/UserProvider";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export default function PublicRoute({ children }) {
     const { user } = useUser();
@@ -8,12 +8,12 @@ export default function PublicRoute({ children }) {
     if (user === undefined) {
         return null;
     } else if (user) {
-        return <Navigate to="/dashboard" />;
+        return <Navigate to="/" />;
     } else {
         return children;
     }
 }
 
 PublicRoute.propTypes = {
-    children: PropTypes.any
-}
+    children: PropTypes.any,
+};

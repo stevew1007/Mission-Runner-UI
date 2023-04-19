@@ -216,7 +216,7 @@ const Topbar = ({ children }) => {
                 <Box>
                     <Toolbar />
                     <Typography variant="h6" mt={2} ml={2}>
-                        数据
+                        通用
                     </Typography>
                     <List sx={{ ml: 2 }}>
                         <ListItem disablePadding>
@@ -224,7 +224,7 @@ const Topbar = ({ children }) => {
                                 统计数据
                             </ListItemButton>
                         </ListItem>
-                        
+
                         <ListItem disablePadding>
                             <ListItemButton
                                 component={NavLink}
@@ -233,6 +233,13 @@ const Topbar = ({ children }) => {
                                 进行中
                             </ListItemButton>
                         </ListItem>
+                        <ListItemButton
+                            component={NavLink}
+                            to="/register_account"
+                        >
+                            登记角色
+
+                        </ListItemButton>
                     </List>
                     <Divider />
                     <Typography variant="h6" mt={2} ml={2}>
@@ -278,6 +285,19 @@ const Topbar = ({ children }) => {
                             <ListItemButton>账目收讫</ListItemButton>
                         </ListItem>
                     </List>
+                    <Typography variant="h6" mt={2} ml={2}>
+                        临时
+                    </Typography>
+                    {/* <List sx={{ ml: 2 }}>
+                        <ListItem disablePadding>
+                            <ListItemButton
+                                component={NavLink}
+                                to="/register_account"
+                            >
+                                注册角色
+                            </ListItemButton>
+                        </ListItem>
+                    </List> */}
                 </Box>
             </Drawer>
             <Main open={sidebarOpened}>{children}</Main>

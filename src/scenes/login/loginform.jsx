@@ -1,10 +1,5 @@
 import { useState } from "react";
-import {
-    Stack,
-    IconButton,
-    InputAdornment,
-    TextField,
-} from "@mui/material";
+import { Stack, IconButton, InputAdornment, TextField } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -13,6 +8,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 import { useUser } from "../../contexts/UserProvider";
 import { useFlash } from "../../contexts/FlashProvider";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const loginSchema = yup.object().shape({
     username: yup.string().required("Username is required."),
@@ -31,9 +27,11 @@ const initialValuesLogin = {
     password: "",
 };
 
-const Form = () => {
+const LoginForm = () => {
     const { login } = useUser();
     const flash = useFlash();
+    const navigate = useNavigate()
+    const location = useLocation()
 
     const handleFormSubmit = async (values, onSubmit) => {
         // print username & pssword to console for debug
@@ -43,15 +41,15 @@ const Form = () => {
             onSubmit.setSubmitting(false);
             onSubmit.setFieldValue("password", "", false);
             flash("用户名或密码错误", "error", 10);
-        } 
-        if (result === 'ok') {
+        }
+        else if (result === 'ok') {
             flash("登录成功", "success");
             formik.setSubmitting(false);
-            
-        } else {
-            flash(`HTTP错误: ${result}, 请重试`, "error", 10);
-            onSubmit.setSubmitting(false);
-            
+            let next = "/";
+            if (location.state && location.state.next) {
+                next = location.state.next;
+            }
+            navigate(next);
         }
     };
 
@@ -79,7 +77,8 @@ const Form = () => {
                         }
                         helperText={
                             formik.touched.username && formik.errors.username
-                            ? formik.errors.username : " "
+                                ? formik.errors.username
+                                : " "
                         }
                     />
                     <TextField
@@ -96,7 +95,8 @@ const Form = () => {
                         }
                         helperText={
                             formik.touched.password && formik.errors.password
-                            ? formik.errors.password : " "
+                                ? formik.errors.password
+                                : " "
                         }
                         InputProps={{
                             endAdornment: (
@@ -132,7 +132,7 @@ const Form = () => {
     );
 };
 
-export default Form;
+export default LoginForm;
 
 {
     /* <Box>

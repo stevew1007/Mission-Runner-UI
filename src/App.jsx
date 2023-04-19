@@ -12,6 +12,7 @@ import { useMemo } from "react";
 import LoginPage from "./scenes/login";
 import PublicRoute from "./components/PublicRoute";
 import PrivateRoute from "./components/PrivateRoute";
+import RegisterAccountPage from "./scenes/register_account";
 
 function App() {
     const { mode } = useGlobal();
@@ -37,7 +38,7 @@ function App() {
                                 <PrivateRoute>
                                     <Routes>
                                         <Route
-                                            path="/dashboard"
+                                            path="/"
                                             element={<Dashboard />}
                                         />
                                         <Route
@@ -59,6 +60,10 @@ function App() {
                                         <Route
                                             path="/account"
                                             element={<Account />}
+                                        />
+                                        <Route
+                                            path="/register_account"
+                                            element={<RegisterAccountPage />}
                                         />
                                     </Routes>
                                 </PrivateRoute>
