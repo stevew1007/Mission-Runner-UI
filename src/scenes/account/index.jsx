@@ -6,20 +6,23 @@ import { useEffect, useState } from "react";
 import { useGlobal } from "../../contexts/GlobalProvider";
 import moment from "moment";
 import { Link } from "react-router-dom";
+import { useUser } from "../../contexts/UserProvider";
 import FlashMessage from "../../components/FlashMessage";
+import { useFlash } from "../../contexts/FlashProvider";
+// import FlashMessage from "../../components/FlashMessage";
 
 const Account = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
+    const { user, toggleUpdateUser } = useUser();
     const { api } = useGlobal();
     const [accounts, setAccounts] = useState();
-
-    let url;
-    url = "/accounts";
+    const [hoverID, setHoverID] = useState();
+    const flash = useFlash();
 
     useEffect(() => {
         (async () => {
-            const response = await api.get(url);
+            const response = await api.get("/accounts");
             if (response.ok) {
                 const results = await response.body;
                 setAccounts(results.data);
@@ -27,7 +30,7 @@ const Account = () => {
                 setAccounts(null);
             }
         })();
-    }, [api, url]);
+    }, [api, user]);
 
     const columns = [
         {
@@ -46,20 +49,23 @@ const Account = () => {
             cellClassName: "name-column--cell",
         },
         {
+            flex: 2,
+        },
+        {
             field: "lp_point",
             headerName: "LP点",
             type: "number",
             headerAlign: "right",
             align: "right",
-            flex: 2,
+            flex: 1,
             editable: true,
         },
         {
             field: "activated",
-            headerName: "状态",
+            headerName: "激活状态",
             headerAlign: "center",
             align: "center",
-            flex: 0.6,
+            flex: 1,
             renderCell: ({ row: { activated } }) => {
                 return (
                     <Chip
@@ -68,6 +74,41 @@ const Account = () => {
                         variant={activated === true ? undefined : "outlined"}
                     ></Chip>
                 );
+            },
+        },
+        {
+            field: "default",
+            headerName: "默认账号",
+            headerAlign: "center",
+            align: "center",
+            flex: 0.8,
+            // Render a chip when default_account_id is equal to the id in this row
+            renderCell: ({ row: { ...data } }) => {
+                if (data.id === Number(user.default_account_id)) {
+                    return (<Chip label="收款账号" color="warning" />);
+                } else {
+                    return (
+                        hoverID === data.id && (
+                            <Chip
+                                label="设为默认"
+                                variant="outlined"
+                                onClick={() => {
+                                    (async () => {
+                                        const response = await api.put(
+                                            `/accounts/${data.id}/default`
+                                        );
+                                        if (response.ok) {
+                                            flash("设置成功", "success", 10);
+                                            toggleUpdateUser()
+                                        } else {
+                                            flash(`设置失败 HTTP ${response.status}`, "error", 10);
+                                        }
+                                    })();
+                                }}
+                            />
+                        )
+                    );
+                }
             },
         },
         {
@@ -88,11 +129,14 @@ const Account = () => {
             {/* <Typography variant="h7">我接受的任务：</Typography> */}
             <Typography variant="body2" sx={{ mt: "2px", mb: 2 }}>
                 {/* {accounts === null ?  : ""} */}
-                
-                {(accounts === undefined || accounts.length == 0) && "没有显示账号？"}
-                <Link variant="subtitle2" to="/register_account">
-                    注册新账号
-                </Link>
+
+                {(accounts === undefined || accounts.length == 0) &&
+                    "没有显示账号？"}
+                <Typography variant="h7">
+                    <Link variant="subtitle2" to="/register_account">
+                        注册新账号
+                    </Link>
+                </Typography>
             </Typography>
             <Box
                 // m="10px 0 0 0"
@@ -127,7 +171,36 @@ const Account = () => {
             >
                 <DataGrid
                     autoHeight
-                    // checkboxSelection
+                    slotProps={{
+                        row: {
+                            onMouseEnter: (params) => {
+                                // Get the corresponding account id for the selected row
+                                // const rowID =
+                                // const row = accounts[params.currentTarget.dataset.id]
+
+                                setHoverID(
+                                    accounts[
+                                        params.currentTarget.dataset.rowindex
+                                    ].id
+                                );
+                                // console.log(
+                                //     `Accounts No.${params.currentTarget.dataset.rowindex} is ${hoverID}`
+                                // );
+                                console.log(user.default_account_id);
+                            },
+                            onMouseLeave: (params) => {
+                                setHoverID();
+                                // console.log();
+                                // const rowID = params.currentTarget.dataset.rowindex
+                                // const len = accounts.length - 1
+                                // if( rowID === '0'){
+                                //     setHoverID();
+                                // } else if (Number(rowID) === len) {
+                                //     setHoverID();
+                                // }
+                            },
+                        },
+                    }}
                     rows={accounts === undefined ? [] : accounts}
                     loading={accounts === undefined}
                     columns={columns}

@@ -1,19 +1,8 @@
-import {
-    Stack,
-    IconButton,
-    InputAdornment,
-    TextField,
-    Box,
-    Checkbox,
-    Typography,
-} from "@mui/material";
+import { Stack, TextField, Box, Checkbox, Typography, FormControlLabel } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
-import { useUser } from "../../contexts/UserProvider";
 import { useGlobal } from "../../contexts/GlobalProvider";
 import { useFlash } from "../../contexts/FlashProvider";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +15,7 @@ const loginSchema = yup.object().shape({
 const initialValues = {
     name: "",
     lp_point: 0,
-    continue: false
+    continue: false,
 };
 
 const RegisterAccountForm = () => {
@@ -41,23 +30,20 @@ const RegisterAccountForm = () => {
         let sending = {
             name: values.name,
             lp_point: values.lp_point,
-        }
+        };
         const result = await api.post("/accounts", sending);
         if (!result.ok) {
             onSubmit.setSubmitting(false);
             flash(`注册出错 HTTP : ${result.status}, 请重试`, "error", 10);
-        }
-        else  {
+        } else {
             flash("注册成功", "success");
             formik.setValues(initialValues);
             formik.setSubmitting(false);
             if (values.continue) {
                 formik.setValues(initialValues);
-            } 
-            else {
+            } else {
                 navigate("/account");
             }
-
         }
     };
 
@@ -68,7 +54,7 @@ const RegisterAccountForm = () => {
     });
 
     return (
-        <Box mt='10px'>
+        <Box mt="10px">
             <form onSubmit={formik.handleSubmit}>
                 <Stack spacing={1}>
                     <TextField
@@ -78,9 +64,7 @@ const RegisterAccountForm = () => {
                         label="角色名"
                         value={formik.values.name}
                         onChange={formik.handleChange}
-                        error={
-                            formik.touched.name && formik.errors.name
-                        }
+                        error={formik.touched.name && formik.errors.name}
                         helperText={
                             formik.touched.name && formik.errors.name
                                 ? formik.errors.name
@@ -100,8 +84,14 @@ const RegisterAccountForm = () => {
                         }
                     />
                     <Box display="flex" alignItems="center">
-                        <Checkbox name="continue" size="small" />
-                        <Typography>继续登记下一个角色</Typography>
+                        <FormControlLabel
+                            control={<Checkbox checked={formik.values.continue} />}
+                            label={formik.values.continue ? "继续登记下一个角色" : "跳转到角色列表"}
+                            name="continue"
+                            onChange={formik.handleChange}
+                            // sx={{ ml: '-6px' }}
+                        />
+                        {formik.values.continue}
                     </Box>
                     <LoadingButton
                         color="success"

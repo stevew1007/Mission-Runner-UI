@@ -6,6 +6,7 @@ const UserContext = createContext();
 
 export default function UserProvider({ children }) {
     const [user, setUser] = useState();
+    const [updateUser, setUpdateUser] = useState(false);
     const {api} = useGlobal();
 
     useEffect(() => {
@@ -17,7 +18,11 @@ export default function UserProvider({ children }) {
                 setUser(null);
             }
         })();
-    }, [api]);
+    }, [api, updateUser]);
+
+    const toggleUpdateUser = () => {
+        setUpdateUser(updateUser ? false : true);
+    };
 
     const login = async (username, password) => {
         const result = await api.login(username, password);
@@ -35,7 +40,7 @@ export default function UserProvider({ children }) {
     };
 
     return (
-        <UserContext.Provider value={{ user, setUser, login, logout }}>
+        <UserContext.Provider value={{ user, setUser, login, logout, toggleUpdateUser }}>
             {children}
         </UserContext.Provider>
     );
