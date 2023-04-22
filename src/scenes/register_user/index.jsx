@@ -12,7 +12,8 @@ import { tokens } from "../../theme";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import { useGlobal } from "../../contexts/GlobalProvider";
-import LoginForm from "./loginform";
+import RegUserForm from "./reg_user_form";
+import FlashMessage from "../../components/FlashMessage";
 
 const StyledContent = styled("div")(({ theme }) => ({
     maxWidth: 480,
@@ -24,7 +25,7 @@ const StyledContent = styled("div")(({ theme }) => ({
     padding: theme.spacing(12, 0),
 }));
 
-const LoginPage = () => {
+const RegisterUserPage = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const { toggleMode } = useGlobal();
@@ -72,17 +73,18 @@ const LoginPage = () => {
             </Box>
             <StyledContent>
                 <Typography variant="h3" fontWeight="bold" gutterBottom>
-                    登录
+                    注册
                 </Typography>
 
                 <Typography variant="body2" sx={{ mt: "2px", mb: 2 }}>
-                    没有账号？
-                    <Link variant="subtitle2" href="/register">注册</Link>
+                    已有账号？
+                    <Link variant="subtitle2" href="/login">登录</Link>
                 </Typography>
-                <LoginForm />
+                <FlashMessage/>
+                <RegUserForm/>
             </StyledContent>
         </Box>
     );
 };
 
-export default LoginPage;
+export default RegisterUserPage;

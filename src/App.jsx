@@ -6,13 +6,15 @@ import Running from "./scenes/running";
 import Inprogress from "./scenes/inprogress";
 import Completeing from "./scenes/completing";
 import Account from "./scenes/account";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useGlobal } from "./contexts/GlobalProvider";
 import { useMemo } from "react";
 import LoginPage from "./scenes/login";
 import PublicRoute from "./components/PublicRoute";
 import PrivateRoute from "./components/PrivateRoute";
 import RegisterAccountPage from "./scenes/register_account";
+import RegUserPage from "./scenes/register_user";
+import Invalid from "./scenes/invalid";
 
 function App() {
     const { mode } = useGlobal();
@@ -25,10 +27,24 @@ function App() {
                 <main className="content">
                     <Routes>
                         <Route
+                            path="/404"
+                            element={
+                                <Invalid />
+                            }
+                        />
+                        <Route
                             path="/login"
                             element={
                                 <PublicRoute>
                                     <LoginPage />
+                                </PublicRoute>
+                            }
+                        />
+                        <Route
+                            path="/register"
+                            element={
+                                <PublicRoute>
+                                    <RegUserPage />
                                 </PublicRoute>
                             }
                         />
@@ -39,6 +55,12 @@ function App() {
                                     <Routes>
                                         <Route
                                             path="/"
+                                            element={
+                                                <Navigate to="/dashboard" />
+                                            }
+                                        />
+                                        <Route
+                                            path="/dashboard"
                                             element={<Dashboard />}
                                         />
                                         <Route

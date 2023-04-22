@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Stack, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
+import { Stack, IconButton, InputAdornment, TextField } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -9,52 +9,59 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useUser } from "../../contexts/UserProvider";
 import { useFlash } from "../../contexts/FlashProvider";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useGlobal } from "../../contexts/GlobalProvider";
 
-const loginSchema = yup.object().shape({
-    username: yup.string().required("Username is required."),
-    password: yup.string().required("Password is required."),
+const formSchema = yup.object().shape({
+    username: yup.string().required("需要输入用户名"),
+    email: yup.string().email().required("需要输入邮箱"),
+    im_number: yup
+        .string()
+        .matches(/^[1-9]{1}[0-9]{4,14}$/, "请输入正确的QQ号格式")
+        .required("需要输入QQ号"),
+    password: yup.string().required("需要输入密码"),
 });
 
-// const initialValuesRegister = {
-//     firstName: "",
-//     lastName: "",
-//     email: "",
-//     password: "",
-// };
-
-const initialValuesLogin = {
+const initialValues = {
     username: "",
+    email: "",
+    im_number: "",
     password: "",
 };
 
-const LoginForm = () => {
+const RegUserForm = () => {
+    const { api } = useGlobal();
     const { login } = useUser();
     const flash = useFlash();
-    const navigate = useNavigate()
-    const location = useLocation()
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const handleFormSubmit = async (values, onSubmit) => {
         onSubmit.setSubmitting(true);
-        const result = await login(values.username, values.password);
-        if (result === 'fail') {
+        const result = await api.post("/users", values);
+        if (result.ok) {
+            onSubmit.setSubmitting(false);
+            const loginResult = await login(values.username, values.password);
+            if (loginResult === "fail") {
+                flash("注册成功, 请登录", "success", 10);
+                navigate("/login");
+            } else if (result === "ok") {
+                flash("注册成功", "success", 10);
+                let next = "/";
+                if (location.state && location.state.next) {
+                    next = location.state.next;
+                }
+                navigate(next);
+            }
+        } else {
             onSubmit.setSubmitting(false);
             onSubmit.setFieldValue("password", "", false);
-            flash("用户名或密码错误", "error", 10);
-        }
-        else if (result === 'ok') {
-            flash("登录成功", "success");
-            formik.setSubmitting(false);
-            let next = "/";
-            if (location.state && location.state.next) {
-                next = location.state.next;
-            }
-            navigate(next);
+            flash(`注册出错 HTTP ${result.status}`, "error", 10);
         }
     };
 
     const formik = useFormik({
-        initialValues: initialValuesLogin,
-        validationSchema: loginSchema,
+        initialValues: initialValues,
+        validationSchema: formSchema,
         onSubmit: handleFormSubmit,
     });
 
@@ -71,12 +78,50 @@ const LoginForm = () => {
                         label="用户名"
                         value={formik.values.username}
                         onChange={formik.handleChange}
+                        // onBlur={formik.handleBlur}
                         error={
-                            formik.touched.password && formik.errors.password
+                            formik.touched.username &&
+                            formik.errors.username != undefined
                         }
                         helperText={
                             formik.touched.username && formik.errors.username
                                 ? formik.errors.username
+                                : " "
+                        }
+                    />
+                    <TextField
+                        fullWidth
+                        id="email"
+                        name="email"
+                        label="邮箱"
+                        value={formik.values.email}
+                        onChange={formik.handleChange}
+                        // onBlur={formik.handleBlur}
+                        error={
+                            formik.touched.email &&
+                            formik.errors.email != undefined
+                        }
+                        helperText={
+                            formik.touched.email && formik.errors.email
+                                ? formik.errors.email
+                                : " "
+                        }
+                    />
+                    <TextField
+                        fullWidth
+                        id="im_number"
+                        name="im_number"
+                        label="QQ号"
+                        value={formik.values.im_number}
+                        onChange={formik.handleChange}
+                        // onBlur={formik.handleBlur}
+                        error={
+                            formik.touched.im_number &&
+                            formik.errors.im_number != undefined
+                        }
+                        helperText={
+                            formik.touched.im_number && formik.errors.im_number
+                                ? formik.errors.im_number
                                 : " "
                         }
                     />
@@ -87,10 +132,11 @@ const LoginForm = () => {
                         label="密码"
                         type={showPassword ? "text" : "password"}
                         value={formik.values.password}
-                        onBlur={formik.handleBlur}
+                        // onBlur={formik.handleBlur}
                         onChange={formik.handleChange}
                         error={
-                            formik.touched.password && formik.errors.password
+                            formik.touched.password &&
+                            formik.errors.password != undefined
                         }
                         helperText={
                             formik.touched.password && formik.errors.password
@@ -122,8 +168,9 @@ const LoginForm = () => {
                         fullWidth
                         type="submit"
                         loading={formik.isSubmitting}
+                        sx={{ mt: 1 }}
                     >
-                        <Typography variant="h6">登   录</Typography>
+                        Submit
                     </LoadingButton>
                 </Stack>
             </form>
@@ -131,7 +178,7 @@ const LoginForm = () => {
     );
 };
 
-export default LoginForm;
+export default RegUserForm;
 
 {
     /* <Box>

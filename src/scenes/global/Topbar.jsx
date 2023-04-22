@@ -12,7 +12,6 @@ import {
     Divider,
     styled,
     Link,
-    Tooltip,
     Avatar,
     Menu,
     MenuItem,
@@ -22,8 +21,10 @@ import InputBase from "@mui/material/InputBase";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+// import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import { NavLink } from "react-router-dom";
 import { useGlobal } from "../../contexts/GlobalProvider";
@@ -117,10 +118,10 @@ const Topbar = ({ children }) => {
                                 <LightModeOutlinedIcon />
                             )}
                         </IconButton>
-                        <IconButton>
-                            <NotificationsOutlinedIcon />
-                        </IconButton>
-                        <Tooltip title="Account settings">
+                        <Box>
+                            <IconButton>
+                                <NotificationsOutlinedIcon />
+                            </IconButton>
                             <IconButton
                                 onClick={handleClick}
                                 size="small"
@@ -143,58 +144,65 @@ const Topbar = ({ children }) => {
                                         : ""}
                                 </Avatar>
                             </IconButton>
-                        </Tooltip>
-                        <Menu
-                            anchorEl={anchorEl}
-                            id="account-menu"
-                            open={open}
-                            onClose={handleClose}
-                            onClick={handleClose}
-                            PaperProps={{
-                                elevation: 0,
-                                sx: {
-                                    overflow: "visible",
-                                    filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                                    mt: 1.5,
-                                    "& .MuiAvatar-root": {
-                                        width: 32,
-                                        height: 32,
-                                        ml: -0.5,
-                                        mr: 1,
+                            <Menu
+                                anchorEl={anchorEl}
+                                id="account-menu"
+                                open={open}
+                                onClose={handleClose}
+                                onClick={handleClose}
+                                PaperProps={{
+                                    elevation: 0,
+                                    sx: {
+                                        overflow: "visible",
+                                        filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                                        mt: 1.5,
+                                        "& .MuiAvatar-root": {
+                                            width: 32,
+                                            height: 32,
+                                            ml: -0.5,
+                                            mr: 1,
+                                        },
+                                        "&:before": {
+                                            content: '""',
+                                            display: "block",
+                                            position: "absolute",
+                                            top: 0,
+                                            right: 14,
+                                            width: 10,
+                                            height: 10,
+                                            bgcolor: "background.paper",
+                                            transform:
+                                                "translateY(-50%) rotate(45deg)",
+                                            zIndex: 0,
+                                        },
                                     },
-                                    "&:before": {
-                                        content: '""',
-                                        display: "block",
-                                        position: "absolute",
-                                        top: 0,
-                                        right: 14,
-                                        width: 10,
-                                        height: 10,
-                                        bgcolor: "background.paper",
-                                        transform:
-                                            "translateY(-50%) rotate(45deg)",
-                                        zIndex: 0,
-                                    },
-                                },
-                            }}
-                            transformOrigin={{
-                                horizontal: "right",
-                                vertical: "top",
-                            }}
-                            anchorOrigin={{
-                                horizontal: "right",
-                                vertical: "bottom",
-                            }}
-                        >
-                            <MenuItem>
-                                <SettingsOutlinedIcon />
-                                <Typography ml={1}>Setting</Typography>
-                            </MenuItem>
-                            <MenuItem onClick={logout}>
-                                <LogoutOutlinedIcon />
-                                <Typography ml={1}>Logout</Typography>
-                            </MenuItem>
-                        </Menu>
+                                }}
+                                transformOrigin={{
+                                    horizontal: "right",
+                                    vertical: "top",
+                                }}
+                                anchorOrigin={{
+                                    horizontal: "right",
+                                    vertical: "bottom",
+                                }}
+                            >
+                                <MenuItem component={NavLink} to="/account">
+                                    <AccountCircleOutlinedIcon />
+                                    <Typography ml={1}>账号管理</Typography>
+                                </MenuItem>
+                                <MenuItem
+                                    component={NavLink}
+                                    to="/register_account"
+                                >
+                                    <PersonAddOutlinedIcon />
+                                    <Typography ml={1}>登记账号</Typography>
+                                </MenuItem>
+                                <MenuItem onClick={logout}>
+                                    <LogoutOutlinedIcon />
+                                    <Typography ml={1}>登出</Typography>
+                                </MenuItem>
+                            </Menu>
+                        </Box>
                     </Box>
                 </Toolbar>
             </AppBar>
@@ -219,26 +227,11 @@ const Topbar = ({ children }) => {
                         通用
                     </Typography>
                     <List sx={{ ml: 2 }}>
-                        <ListItem disablePadding>
-                            <ListItemButton component={NavLink} to="/dashboard">
-                                统计数据
-                            </ListItemButton>
-                        </ListItem>
-
-                        <ListItem disablePadding>
-                            <ListItemButton
-                                component={NavLink}
-                                to="/inprogress"
-                            >
-                                进行中
-                            </ListItemButton>
-                        </ListItem>
-                        <ListItemButton
-                            component={NavLink}
-                            to="/register_account"
-                        >
-                            登记角色
-
+                        <ListItemButton component={NavLink} to="/dashboard">
+                            统计数据
+                        </ListItemButton>
+                        <ListItemButton component={NavLink} to="/inprogress">
+                            进行中
                         </ListItemButton>
                     </List>
                     <Divider />
@@ -246,58 +239,69 @@ const Topbar = ({ children }) => {
                         老板
                     </Typography>
                     <List sx={{ ml: 2 }}>
-                        <ListItem disablePadding>
-                            <ListItemButton
-                                component={NavLink}
-                                to="/publishing"
-                            >
-                                发布任务
-                            </ListItemButton>
-                        </ListItem>
-                        <ListItem disablePadding>
-                            <ListItemButton>费用结算</ListItemButton>
-                        </ListItem>
-                        <ListItem disablePadding>
-                            <ListItemButton component={NavLink} to="/account">
-                                声望号
-                            </ListItemButton>
-                        </ListItem>
+                        <ListItemButton component={NavLink} to="/publishing">
+                            发布任务
+                        </ListItemButton>
+                        <ListItemButton>费用结算</ListItemButton>
                     </List>
-                    <Divider />
-                    <Typography variant="h6" mt={2} ml={2}>
-                        打手
-                    </Typography>
-                    <List sx={{ ml: 2 }}>
-                        <ListItem disablePadding>
-                            <ListItemButton component={NavLink} to="/running">
-                                接受任务
-                            </ListItemButton>
-                        </ListItem>
-                        <ListItem disablePadding>
-                            <ListItemButton
-                                component={NavLink}
-                                to="/completing"
-                            >
-                                确认完成
-                            </ListItemButton>
-                        </ListItem>
-                        <ListItem disablePadding>
-                            <ListItemButton>账目收讫</ListItemButton>
-                        </ListItem>
-                    </List>
-                    <Typography variant="h6" mt={2} ml={2}>
-                        临时
-                    </Typography>
-                    {/* <List sx={{ ml: 2 }}>
-                        <ListItem disablePadding>
-                            <ListItemButton
-                                component={NavLink}
-                                to="/register_account"
-                            >
-                                注册角色
-                            </ListItemButton>
-                        </ListItem>
-                    </List> */}
+                    {user.role != "mission_runner" && (
+                        <Box>
+                            <Divider />
+                            <Typography variant="h6" mt={2} ml={2}>
+                                打手
+                            </Typography>
+                            <List sx={{ ml: 2 }}>
+                                <ListItem disablePadding>
+                                    <ListItemButton
+                                        component={NavLink}
+                                        to="/running"
+                                    >
+                                        接受任务
+                                    </ListItemButton>
+                                </ListItem>
+                                <ListItem disablePadding>
+                                    <ListItemButton
+                                        component={NavLink}
+                                        to="/completing"
+                                    >
+                                        确认完成
+                                    </ListItemButton>
+                                </ListItem>
+                                <ListItem disablePadding>
+                                    <ListItemButton>账目收讫</ListItemButton>
+                                </ListItem>
+                            </List>
+                        </Box>
+                    )}
+
+                    {user.role === "admin" && (
+                        <Box>
+                            <Divider />
+                            <Typography variant="h6" mt={2} ml={2}>
+                                管理员
+                            </Typography>
+                            <List sx={{ ml: 2 }}>
+                                <ListItemButton
+                                    component={NavLink}
+                                    to="/register_account"
+                                >
+                                    用户权限设置
+                                </ListItemButton>
+                                <ListItemButton
+                                    component={NavLink}
+                                    to="/register_account"
+                                >
+                                    账号激活管理
+                                </ListItemButton>
+                                <ListItemButton
+                                    component={NavLink}
+                                    to="/register_account"
+                                >
+                                    操作记录审查
+                                </ListItemButton>
+                            </List>
+                        </Box>
+                    )}
                 </Box>
             </Drawer>
             <Main open={sidebarOpened}>{children}</Main>

@@ -10,9 +10,11 @@ export default class ApiClient {
     if (response.status === 401 && options.url !== '/tokens') {
       const refreshResponse = await this.put('/tokens', {
         access_token: localStorage.getItem('accessToken'),
+        refresh_token: localStorage.getItem('refresh_token')
       });
       if (refreshResponse.ok) {
         localStorage.setItem('accessToken', refreshResponse.body.access_token);
+        localStorage.setItem('refresh_token', response.body.refresh_token);
         response = this.requestInternal(options);
       }
     }
@@ -85,6 +87,7 @@ export default class ApiClient {
       return response.status === 401 ? 'fail' : response.status;
     }
     localStorage.setItem('accessToken', response.body.access_token);
+    localStorage.setItem('refresh_token', response.body.refresh_token);
     return 'ok';
   }
 

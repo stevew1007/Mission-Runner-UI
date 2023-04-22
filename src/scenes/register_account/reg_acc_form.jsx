@@ -1,4 +1,4 @@
-import { Stack, TextField, Box, Checkbox, Typography, FormControlLabel } from "@mui/material";
+import { Stack, TextField, Box, Checkbox, FormControlLabel } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -15,11 +15,10 @@ const loginSchema = yup.object().shape({
 const initialValues = {
     name: "",
     lp_point: 0,
-    continue: false,
+    continue: true,
 };
 
 const RegisterAccountForm = () => {
-    // const { login } = useUser();
     const { api } = useGlobal();
     const flash = useFlash();
     const navigate = useNavigate();
@@ -89,9 +88,8 @@ const RegisterAccountForm = () => {
                             label={formik.values.continue ? "继续登记下一个角色" : "跳转到角色列表"}
                             name="continue"
                             onChange={formik.handleChange}
-                            // sx={{ ml: '-6px' }}
                         />
-                        {formik.values.continue}
+                        
                     </Box>
                     <LoadingButton
                         color="success"

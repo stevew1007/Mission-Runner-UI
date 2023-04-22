@@ -10,7 +10,7 @@ import { useUser } from "../../contexts/UserProvider";
 import { useFlash } from "../../contexts/FlashProvider";
 // import FlashMessage from "../../components/FlashMessage";
 
-const Account = () => {
+const Activate = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const { user, toggleUpdateUser } = useUser();
@@ -202,4 +202,4 @@ const Account = () => {
     );
 };
 
-export default Account;
+export default Activate;

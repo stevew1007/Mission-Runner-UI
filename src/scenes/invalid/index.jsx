@@ -12,10 +12,9 @@ import { tokens } from "../../theme";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import { useGlobal } from "../../contexts/GlobalProvider";
-import LoginForm from "./loginform";
 
 const StyledContent = styled("div")(({ theme }) => ({
-    maxWidth: 480,
+    maxWidth: 400,
     margin: "auto",
     minHeight: "100vh",
     display: "flex",
@@ -24,7 +23,7 @@ const StyledContent = styled("div")(({ theme }) => ({
     padding: theme.spacing(12, 0),
 }));
 
-const LoginPage = () => {
+const Invalid = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const { toggleMode } = useGlobal();
@@ -71,18 +70,15 @@ const LoginPage = () => {
                 </AppBar>
             </Box>
             <StyledContent>
-                <Typography variant="h3" fontWeight="bold" gutterBottom>
-                    登录
+                <Typography variant="h2" fontWeight="bold" gutterBottom>
+                   HTTP 404 找不到页面
                 </Typography>
-
-                <Typography variant="body2" sx={{ mt: "2px", mb: 2 }}>
-                    没有账号？
-                    <Link variant="subtitle2" href="/register">注册</Link>
+                <Typography variant="h2" fontWeight="bold" gutterBottom>
+                    
                 </Typography>
-                <LoginForm />
             </StyledContent>
         </Box>
     );
 };
 
-export default LoginPage;
+export default Invalid;
