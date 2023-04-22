@@ -16,7 +16,7 @@ export default class ApiClient {
       });
       if (refreshResponse.ok) {
         localStorage.setItem('accessToken', refreshResponse.body.access_token);
-        localStorage.setItem('refresh_token', response.body.refresh_token);
+        localStorage.setItem('refreshToken', refreshResponse.body.refresh_token);
         response = this.requestInternal(options);
       }
     }

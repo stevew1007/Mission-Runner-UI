@@ -48,7 +48,7 @@ function App() {
                                 </PublicRoute>
                             }
                         />
-
+                        <Route path="/" element={<Navigate to='/dashboard' />} />
                         <Route
                             path="*"
                             element={
