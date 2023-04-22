@@ -1,4 +1,10 @@
-import { Box, Chip, Typography, useTheme } from "@mui/material";
+import {
+    Box,
+    Chip,
+    Tooltip,
+    Typography,
+    useTheme,
+} from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import Body from "../../components/Body";
@@ -8,6 +14,7 @@ import moment from "moment";
 import { Link } from "react-router-dom";
 import { useUser } from "../../contexts/UserProvider";
 import { useFlash } from "../../contexts/FlashProvider";
+
 // import FlashMessage from "../../components/FlashMessage";
 
 const AdminActivateAccount = () => {
@@ -16,15 +23,15 @@ const AdminActivateAccount = () => {
     const { user, toggleUpdateUser } = useUser();
     const { api } = useGlobal();
     const [accounts, setAccounts] = useState();
-    const [hoverID, setHoverID] = useState();
     const flash = useFlash();
 
     useEffect(() => {
         (async () => {
-            const response = await api.get("/accounts");
+            const response = await api.get("/admin/accounts");
             if (response.ok) {
                 const results = await response.body;
                 setAccounts(results.data);
+                // console.log(results.data);
             } else {
                 setAccounts(null);
             }
@@ -45,11 +52,21 @@ const AdminActivateAccount = () => {
             headerAlign: "center",
             align: "center",
             flex: 1,
-            cellClassName: "name-column--cell",
+        },
+        {
+            field: "owner",
+            headerName: "所有者",
+            headerAlign: "center",
+            align: "center",
+            flex: 1,
+            renderCell: ({ row: { owner } }) => {
+                return <Typography>{owner.username}</Typography>;
+            },
         },
         {
             field: "filler",
-            flex: 2,
+            headerName: "",
+            flex: 1,
         },
         {
             field: "lp_point",
@@ -66,13 +83,55 @@ const AdminActivateAccount = () => {
             headerAlign: "center",
             align: "center",
             flex: 1,
-            renderCell: ({ row: { activated } }) => {
+            renderCell: ({ row: { ...data } }) => {
                 return (
-                    <Chip
-                        label={activated === true ? "已激活" : "未激活"}
-                        color={activated === true ? "success" : undefined}
-                        variant={activated === true ? undefined : "outlined"}
-                    ></Chip>
+                    <Tooltip
+                        title={
+                            data.activated ? "点击禁用此账户" : "点击激活此账号"
+                        }
+                    >
+                        <div>
+                            <Chip
+                                id={data.id}
+                                label={
+                                    data.activated === true
+                                        ? "已激活"
+                                        : "未激活"
+                                }
+                                color={
+                                    data.activated === true
+                                        ? "success"
+                                        : undefined
+                                }
+                                variant={
+                                    data.activated === true
+                                        ? undefined
+                                        : "outlined"
+                                }
+                                onClick={() => {
+                                    (async () => {
+                                        const response = await api.post(
+                                            `/admin/accounts/${data.id}/${
+                                                data.activated === true
+                                                    ? "deactivate"
+                                                    : "activate"
+                                            }`
+                                        );
+                                        if (response.ok) {
+                                            flash("设置成功", "success", 10);
+                                            toggleUpdateUser();
+                                        } else {
+                                            flash(
+                                                `设置失败 HTTP ${response.status}`,
+                                                "error",
+                                                10
+                                            );
+                                        }
+                                    })();
+                                }}
+                            />
+                        </div>
+                    </Tooltip>
                 );
             },
         },
@@ -90,7 +149,7 @@ const AdminActivateAccount = () => {
     ];
 
     return (
-        <Body topbar={true} title="账号登记" subtitle="又一位做点大老板出现咯">
+        <Body topbar={true} title="激活管理" subtitle="哪个敢惹我，我就让他打不成燃烧">
             {/* <Typography variant="h7">我接受的任务：</Typography> */}
             <Typography variant="body2" sx={{ mt: "2px", mb: 2 }}>
                 {/* {accounts === null ?  : ""} */}

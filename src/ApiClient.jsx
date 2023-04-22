@@ -42,7 +42,6 @@ export default class ApiClient {
           'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
           ...options.headers,
         },
-        credentials: options.url === '/tokens' ? 'include' : 'omit',
         body: options.body ? JSON.stringify(options.body) : null,
       });
     }
@@ -92,6 +91,8 @@ export default class ApiClient {
     }
     localStorage.setItem('accessToken', response.body.access_token);
     localStorage.setItem('refreshToken', response.body.refresh_token);
+    // console.log(localStorage.getItem('accessToken'))
+    // console.log(localStorage.getItem('refreshToken'))
     return 'ok';
   }
 

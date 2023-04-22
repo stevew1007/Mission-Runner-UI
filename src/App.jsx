@@ -19,6 +19,7 @@ import AdminRoute from "./components/AdminRoute";
 // import AdminActivate from "./scenes/admin_";
 import AdminSetRole from "./scenes/admin_setrole";
 import AdminActivateAccount from "./scenes/admin_activateaccount";
+import AdminAudit from "./scenes/admin_audit";
 
 function App() {
     const { mode } = useGlobal();
@@ -65,6 +66,13 @@ function App() {
                                             element={
                                             <AdminRoute>
                                                 <AdminActivateAccount />
+                                            </AdminRoute>}
+                                        />
+                                        <Route
+                                            path="/admin/audit"
+                                            element={
+                                            <AdminRoute>
+                                                <AdminAudit />
                                             </AdminRoute>}
                                         />
                                         <Route

@@ -39,7 +39,7 @@ const RegisterAccountForm = () => {
             formik.setValues(initialValues);
             formik.setSubmitting(false);
             if (values.continue) {
-                formik.setValues(initialValues);
+                formik.resetForm(initialValues)
             } else {
                 navigate("/account");
             }

@@ -295,7 +295,7 @@ const Topbar = ({ children }) => {
                                 </ListItemButton>
                                 <ListItemButton
                                     component={NavLink}
-                                    to="/register_account"
+                                    to="/admin/audit"
                                 >
                                     操作记录审查
                                 </ListItemButton>

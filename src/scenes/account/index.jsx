@@ -49,6 +49,7 @@ const Account = () => {
         },
         {
             field: "filler",
+            headerName: "",
             flex: 2,
         },
         {

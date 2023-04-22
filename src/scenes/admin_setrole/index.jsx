@@ -1,6 +1,5 @@
 import {
     Box,
-    Chip,
     Typography,
     useTheme,
     styled,
@@ -15,7 +14,6 @@ import Body from "../../components/Body";
 import { useEffect, useState } from "react";
 import { useGlobal } from "../../contexts/GlobalProvider";
 import moment from "moment";
-import { Link } from "react-router-dom";
 import { useUser } from "../../contexts/UserProvider";
 import { useFlash } from "../../contexts/FlashProvider";
 import { KeyboardArrowDown } from "@mui/icons-material";
@@ -200,6 +198,7 @@ const AdminSetRole = () => {
                             onClick={handleClick}
                             endIcon={<KeyboardArrowDown />}
                             color={TranslateRole(role).color}
+                            disabled={user.id == id}
                         >
                             {TranslateRole(role).label}
                         </Button>
@@ -257,16 +256,8 @@ const AdminSetRole = () => {
 
     return (
         <Body topbar={true} title="账号激活" subtitle="这个账号谁的啊">
-            {/* <Typography variant="h7">我接受的任务：</Typography> */}
             <Typography variant="body2" sx={{ mt: "2px", mb: 2 }}>
                 {/* {accounts === null ?  : ""} */}
-
-                {(users === undefined || users.length == 0) && "没有显示账号？"}
-                <Typography variant="h7">
-                    <Link variant="subtitle2" to="/register_account">
-                        注册新账号
-                    </Link>
-                </Typography>
             </Typography>
             <Box
                 // m="10px 0 0 0"
