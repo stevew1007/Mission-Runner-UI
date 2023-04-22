@@ -8,9 +8,11 @@ export default class ApiClient {
   async request(options) {
     let response = await this.requestInternal(options);
     if (response.status === 401 && options.url !== '/tokens') {
+      console.log(localStorage.getItem('accessToken'))
+      console.log(localStorage.getItem('refreshToken'))
       const refreshResponse = await this.put('/tokens', {
         access_token: localStorage.getItem('accessToken'),
-        refresh_token: localStorage.getItem('refresh_token')
+        refresh_token: localStorage.getItem('refreshToken')
       });
       if (refreshResponse.ok) {
         localStorage.setItem('accessToken', refreshResponse.body.access_token);
@@ -32,6 +34,7 @@ export default class ApiClient {
 
     let response;
     try {
+      //console.log(options.url === '/tokens')
       response = await fetch(this.base_url + options.url + query, {
         method: options.method,
         headers: {
@@ -39,6 +42,7 @@ export default class ApiClient {
           'Authorization': 'Bearer ' + localStorage.getItem('accessToken'),
           ...options.headers,
         },
+        credentials: options.url === '/tokens' ? 'include' : 'omit',
         body: options.body ? JSON.stringify(options.body) : null,
       });
     }
@@ -87,7 +91,7 @@ export default class ApiClient {
       return response.status === 401 ? 'fail' : response.status;
     }
     localStorage.setItem('accessToken', response.body.access_token);
-    localStorage.setItem('refresh_token', response.body.refresh_token);
+    localStorage.setItem('refreshToken', response.body.refresh_token);
     return 'ok';
   }
 

@@ -125,7 +125,7 @@ const Account = () => {
     ];
 
     return (
-        <Body topbar={true} title="账号管理" subtitle="又一位做点大老板出现咯">
+        <Body topbar={true} title="账号登记" subtitle="又一位做点大老板出现咯">
             {/* <Typography variant="h7">我接受的任务：</Typography> */}
             <Typography variant="body2" sx={{ mt: "2px", mb: 2 }}>
                 {/* {accounts === null ?  : ""} */}

@@ -10,7 +10,7 @@ import { useUser } from "../../contexts/UserProvider";
 import { useFlash } from "../../contexts/FlashProvider";
 // import FlashMessage from "../../components/FlashMessage";
 
-const Activate = () => {
+const AdminActivateAccount = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const { user, toggleUpdateUser } = useUser();
@@ -77,41 +77,6 @@ const Activate = () => {
             },
         },
         {
-            field: "default",
-            headerName: "默认账号",
-            headerAlign: "center",
-            align: "center",
-            flex: 0.8,
-            // Render a chip when default_account_id is equal to the id in this row
-            renderCell: ({ row: { ...data } }) => {
-                if (data.id === Number(user.default_account_id)) {
-                    return (<Chip label="收款账号" color="warning" />);
-                } else {
-                    return (
-                        hoverID === data.id && (
-                            <Chip
-                                label="设为默认"
-                                variant="outlined"
-                                onClick={() => {
-                                    (async () => {
-                                        const response = await api.put(
-                                            `/accounts/${data.id}/default`
-                                        );
-                                        if (response.ok) {
-                                            flash("设置成功", "success", 10);
-                                            toggleUpdateUser()
-                                        } else {
-                                            flash(`设置失败 HTTP ${response.status}`, "error", 10);
-                                        }
-                                    })();
-                                }}
-                            />
-                        )
-                    );
-                }
-            },
-        },
-        {
             field: "created",
             headerName: "登记时间",
             type: "number",
@@ -125,7 +90,7 @@ const Activate = () => {
     ];
 
     return (
-        <Body topbar={true} title="账号管理" subtitle="又一位做点大老板出现咯">
+        <Body topbar={true} title="账号登记" subtitle="又一位做点大老板出现咯">
             {/* <Typography variant="h7">我接受的任务：</Typography> */}
             <Typography variant="body2" sx={{ mt: "2px", mb: 2 }}>
                 {/* {accounts === null ?  : ""} */}
@@ -171,28 +136,6 @@ const Activate = () => {
             >
                 <DataGrid
                     autoHeight
-                    slotProps={{
-                        row: {
-                            onMouseEnter: (params) => {
-                                // Get the corresponding account id for the selected row
-                                // const rowID =
-                                // const row = accounts[params.currentTarget.dataset.id]
-
-                                setHoverID(
-                                    accounts[
-                                        params.currentTarget.dataset.rowindex
-                                    ].id
-                                );
-                                // console.log(
-                                //     `Accounts No.${params.currentTarget.dataset.rowindex} is ${hoverID}`
-                                // );
-                                console.log(user.default_account_id);
-                            },
-                            onMouseLeave: () => {
-                                setHoverID();
-                            },
-                        },
-                    }}
                     rows={accounts === undefined ? [] : accounts}
                     loading={accounts === undefined}
                     columns={columns}
@@ -202,4 +145,4 @@ const Activate = () => {
     );
 };
 
-export default Activate;
+export default AdminActivateAccount;

@@ -8,7 +8,10 @@ export default function AdminRoute({ children }) {
     const flash = useFlash();
 
     if (user.role === "admin") {
+        // Admin will have access as well
         return children;
+    } else if (user.role === "mission_runner") {
+        return children
     } else {
         flash("您没有权限访问该页面", "error", 10);
         return <Navigate to="/dashboard"/>;

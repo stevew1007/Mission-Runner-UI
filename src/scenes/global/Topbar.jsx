@@ -244,7 +244,7 @@ const Topbar = ({ children }) => {
                         </ListItemButton>
                         <ListItemButton>费用结算</ListItemButton>
                     </List>
-                    {user.role != "mission_runner" && (
+                    {user.role != "mission_publisher" && (
                         <Box>
                             <Divider />
                             <Typography variant="h6" mt={2} ml={2}>
@@ -283,13 +283,13 @@ const Topbar = ({ children }) => {
                             <List sx={{ ml: 2 }}>
                                 <ListItemButton
                                     component={NavLink}
-                                    to="/register_account"
+                                    to="/admin/set_role"
                                 >
                                     用户权限设置
                                 </ListItemButton>
                                 <ListItemButton
                                     component={NavLink}
-                                    to="/register_account"
+                                    to="/admin/activate"
                                 >
                                     账号激活管理
                                 </ListItemButton>

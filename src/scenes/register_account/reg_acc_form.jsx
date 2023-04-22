@@ -35,7 +35,7 @@ const RegisterAccountForm = () => {
             onSubmit.setSubmitting(false);
             flash(`注册出错 HTTP : ${result.status}, 请重试`, "error", 10);
         } else {
-            flash("注册成功", "success");
+            flash("注册成功, 请联系管理员激活", "success");
             formik.setValues(initialValues);
             formik.setSubmitting(false);
             if (values.continue) {
