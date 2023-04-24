@@ -3,7 +3,7 @@ import * as yup from "yup";
 import Body from "../../components/Body";
 import MissionMatcher from "../../components/MissionMatcher";
 import { useGlobal } from "../../contexts/GlobalProvider";
-import { useState, useEffect } from "react";
+// import { useState, useEffect } from "react";
 import { Box, Chip } from "@mui/material";
 import moment from "moment";
 
@@ -314,13 +314,13 @@ const Publishing = () => {
         flex: 1,
     };
 
-    const accid_field = {
-        field: "account_id",
-        headerName: "ACC ID",
-        headerAlign: "center",
-        align: "center",
-        flex: 1,
-    };
+    // const accid_field = {
+    //     field: "account_id",
+    //     headerName: "ACC ID",
+    //     headerAlign: "center",
+    //     align: "center",
+    //     flex: 1,
+    // };
 
 
     const columns = [

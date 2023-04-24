@@ -4,7 +4,6 @@ import { DataGrid, useGridApiRef } from "@mui/x-data-grid";
 import { tokens } from "../theme";
 import PropTypes from "prop-types";
 
-import { LoadingButton } from "@mui/lab";
 import { mockDataMission, mockDataMissionSingle } from "../data/mockData";
 import { useEffect, useState } from "react";
 import { useGlobal } from "../contexts/GlobalProvider";
@@ -228,6 +227,7 @@ const MissionMatcher = ({
 MissionMatcher.propTypes = {
     keyword: PropTypes.string,
     columns: PropTypes.array,
+    rejCol: PropTypes.array,
     handleParsing: PropTypes.func,
     handleValidate: PropTypes.func,
 };
