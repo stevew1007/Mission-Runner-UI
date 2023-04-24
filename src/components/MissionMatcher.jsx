@@ -1,172 +1,71 @@
 import { useTheme } from "@emotion/react";
-import { Box, Button, Chip, TextField, Typography } from "@mui/material";
-import * as yup from "yup";
-import { DataGrid } from "@mui/x-data-grid";
+import { Box, Button, TextField, Typography } from "@mui/material";
+import { DataGrid, useGridApiRef } from "@mui/x-data-grid";
 import { tokens } from "../theme";
 import PropTypes from "prop-types";
-import moment from "moment";
+
 import { LoadingButton } from "@mui/lab";
 import { mockDataMission, mockDataMissionSingle } from "../data/mockData";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useGlobal } from "../contexts/GlobalProvider";
 
-const entrySchema = yup.object().shape({
-    entry: yup.string().required("请输入至少一个任务信标"),
-});
-
-const initialValuesEntry = {
-    entry: "",
-};
-
-const MissionMatcher = ({ keyword, identified, cannotid }) => {
+const MissionMatcher = ({
+    keyword,
+    columns,
+    rejCol,
+    handleParsing,
+    handleValidate,
+    
+}) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
-    const [entryValue, setEntryValue] = useState(mockDataMission);
-    const [mission, setMission] = useState();
+    const { missions } = useGlobal();
+    const apiRefAcc = useGridApiRef();
+    // const apiRefRej = useGridApiRef();
+
+    const [entryState, setEntryState] = useState({
+        value: mockDataMission,
+        error: false,
+        helperText: " ",
+        showRej: false,
+    });
+
+    const [accRow, setAccRow] = useState(() => []);
+    const [rejRow, setRejRow] = useState(() => []);
+
+    const updateEntryState = (values) => {
+        const newState = { ...entryState, ...values };
+        setEntryState(newState);
+    };
 
     const handleUpdate = (event) => {
         // console.log(event)
-        setEntryValue(event.target.value);
+        updateEntryState({ value: event.target.value });
     };
 
-    const handleParsing = async () => {
-        let jsonfy = JSON.stringify(entryValue).replace(/^"(.*)"$/, "$1");
-        let lst_str = jsonfy.split("\\n");
-        // console.log(lst_str)
-        let dataArray = lst_str.map((line, index) => {
-            console.log(line);
-            let lineArray = line.split("\\t");
-
-            return {
-                id: index,
-                name: lineArray[0],
-                type: lineArray[1],
-                // no_jump: lineArray[2],
-                galaxy: lineArray[3],
-                // system: lineArray[4],
-                region: lineArray[5],
-                created: lineArray[6],
-                account_name: lineArray[8],
-            };
-        });
-        console.log(dataArray);
-        setMission(dataArray);
+    const handleClick = () => {
+        if (handleValidate === undefined) {
+            if (entryState.value === "") {
+                updateEntryState({ error: true, helperText: "输入不能为空" });
+                return;
+            }
+        }
+        handleParsing(entryState.value);
     };
 
-    const columns = [
-        {
-            field: "id",
-            headerName: "ID",
-            flex: 0.5,
-            renderCell: ({ row: { id, published } }) => {
-                return published === undefined ? (
-                    <Box>--</Box>
-                ) : (
-                    <Box>{id}</Box>
-                );
-            },
-        },
-        {
-            field: "name",
-            headerName: "Name",
-            flex: 4,
-            cellClassName: "name-column--cell",
-        },
-        {
-            field: "account_name",
-            headerName: "发布账号",
-            headerAlign: "center",
-            align: "center",
-            flex: 1.5,
-        },
-        {
-            field: "account_status",
-            headerName: "账号状态",
-            headerAlign: "center",
-            align: "center",
-            flex: 1.5,
-            renderCell: ({ row: { status } }) => {
-                return (
-                    <Chip
-                        label={status != undefined ? "已激活" : "未激活"}
-                        color={status != undefined ? "success" : undefined}
-                        variant={status != undefined ? undefined : "outlined"}
-                    />
-                );
-            },
-        },
-        {
-            field: "galaxy",
-            headerName: "星系",
-            headerAlign: "center",
-            align: "center",
-        },
-        {
-            field: "region",
-            headerName: "星域",
-            headerAlign: "center",
-            align: "center",
-            flex: 1,
-        },
-        
-        
-        {
-            field: "created",
-            headerName: "信标创建",
-            type: "number",
-            headerAlign: "center",
-            align: "center",
-            flex: 1,
-            renderCell: ({ row: { created } }) => {
-                return <Box>{moment(created).fromNow()}</Box>;
-            },
-        },
-        {
-            field: "published",
-            headerName: "发布时间",
-            type: "number",
-            headerAlign: "center",
-            align: "center",
-            flex: 1,
-            renderCell: ({ row: { published } }) => {
-                return published === undefined ? (
-                    <Box>--</Box>
-                ) : (
-                    <Box>{moment(published).fromNow()}</Box>
-                );
-            },
-        },
-        {
-            field: "expired",
-            headerName: "过期时间",
-            type: "number",
-            headerAlign: "center",
-            align: "center",
-            flex: 1,
-            renderCell: ({ row: { expired } }) => {
-                return expired === undefined ? (
-                    <Box>--</Box>
-                ) : (
-                    <Box>{moment(expired).fromNow()}</Box>
-                );
-            },
-        },
-        {
-            field: "status",
-            headerName: "发布状态",
-            headerAlign: "center",
-            align: "center",
-            flex: 1,
-            renderCell: ({ row: { status } }) => {
-                return (
-                    <Chip
-                        label={status != undefined ? "发布中" : "未发布"}
-                        color={status != undefined ? "success" : undefined}
-                        variant={status != undefined ? undefined : "outlined"}
-                    />
-                );
-            },
-        },
-    ];
+    useEffect(() => {
+        if (missions != undefined) {
+            let mission_deepcopy = JSON.parse(JSON.stringify(missions));
+
+            let accept_dc = mission_deepcopy.filter(
+                (mission) => !mission.error
+            );
+            let reject_dc = mission_deepcopy.filter((mission) => mission.error);
+            reject_dc != undefined && updateEntryState({ showRej: true });
+            setAccRow(accept_dc === undefined ? [] : accept_dc);
+            setRejRow(reject_dc === undefined ? [] : reject_dc);
+        }
+    }, [missions]);
 
     return (
         <>
@@ -188,10 +87,10 @@ const MissionMatcher = ({ keyword, identified, cannotid }) => {
                     label="信标"
                     multiline
                     fullWidth
-                    value={entryValue}
+                    value={entryState.value}
                     onChange={handleUpdate}
-                    error={false}
-                    helperText={" "}
+                    error={entryState.error}
+                    helperText={entryState.helperText}
                     rows={4}
                     // placeholder="Test"
                 />
@@ -201,15 +100,16 @@ const MissionMatcher = ({ keyword, identified, cannotid }) => {
                     // mt={2}
                     mb="10px"
                 >
-                    <Button
-                        variant="outlined"
-                        color="success"
-                        // type="submit"
-                        onClick={handleParsing}
-                        // loading={formik.isSubmitting}
-                    >
-                        解析
-                    </Button>
+                    <Box>
+                        <Button
+                            variant="outlined"
+                            color="success"
+                            // type="submit"
+                            onClick={handleClick}
+                        >
+                            解析
+                        </Button>
+                    </Box>
                     <Box>
                         <Button
                             variant="outlined"
@@ -232,7 +132,7 @@ const MissionMatcher = ({ keyword, identified, cannotid }) => {
             </Box>
 
             <Box mt={2}>
-                <Typography variant="h7">可以识别：</Typography>
+                <Typography variant="h7">工作区</Typography>
             </Box>
 
             <Box
@@ -265,19 +165,19 @@ const MissionMatcher = ({ keyword, identified, cannotid }) => {
                 }}
             >
                 <DataGrid
+                    apiRef={apiRefAcc}
                     autoHeight
                     checkboxSelection
-                    rows={mission === undefined ? [] : mission}
-                    // loading={mission === undefined}
+                    rows={accRow}
+                    loading={entryState.isSubmitting}
                     columns={columns}
                 />
             </Box>
-
-            {cannotid != undefined ? (
+            {rejRow != undefined && rejRow.length > 0 ? (
                 <>
                     <Box mt={2}>
                         <Typography variant="h7">
-                            无法识别(检查输入或者联系管理员):
+                            无法处理(检查输入或者联系管理员):
                         </Typography>
                     </Box>
 
@@ -313,8 +213,8 @@ const MissionMatcher = ({ keyword, identified, cannotid }) => {
                         <DataGrid
                             autoHeight
                             checkboxSelection
-                            rows={cannotid}
-                            columns={columns}
+                            rows={rejRow}
+                            columns={rejCol}
                         />
                     </Box>
                 </>
@@ -327,8 +227,9 @@ const MissionMatcher = ({ keyword, identified, cannotid }) => {
 
 MissionMatcher.propTypes = {
     keyword: PropTypes.string,
-    identified: PropTypes.array,
-    cannotid: PropTypes.array,
+    columns: PropTypes.array,
+    handleParsing: PropTypes.func,
+    handleValidate: PropTypes.func,
 };
 
 export default MissionMatcher;

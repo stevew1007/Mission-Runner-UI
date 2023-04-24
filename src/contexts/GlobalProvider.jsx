@@ -1,14 +1,13 @@
-import { createContext, useContext, useState } from 'react';
-import ApiClient from '../ApiClient';
-import PropTypes from 'prop-types';
+import { createContext, useContext, useState, useEffect } from "react";
+import ApiClient from "../ApiClient";
+import PropTypes from "prop-types";
 
 const globalContext = createContext();
 
 const GlobalProvider = ({ children }) => {
-
-    const [mode, setMode] = useState('light');
+    const [mode, setMode] = useState("light");
     const toggleMode = () => {
-        setMode(mode === 'light' ? 'dark' : 'light');
+        setMode(mode === "light" ? "dark" : "light");
     };
 
     const [sidebarOpened, setSidebarOpened] = useState(true);
@@ -18,19 +17,31 @@ const GlobalProvider = ({ children }) => {
 
     const api = new ApiClient();
 
+    const [missions, setMissions] = useState();
+
     return (
-        <globalContext.Provider value={{ mode, toggleMode, sidebarOpened, toggleSidebar, api }}>
+        <globalContext.Provider
+            value={{
+                mode,
+                toggleMode,
+                sidebarOpened,
+                toggleSidebar,
+                api,
+                missions,
+                setMissions
+            }}
+        >
             {children}
         </globalContext.Provider>
     );
-}
+};
 
-export default GlobalProvider
+export default GlobalProvider;
 
 export function useGlobal() {
-    return useContext(globalContext)
+    return useContext(globalContext);
 }
 
 GlobalProvider.propTypes = {
-    children: PropTypes.any
-}
+    children: PropTypes.any,
+};
