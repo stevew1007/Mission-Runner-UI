@@ -14,6 +14,8 @@ const MissionMatcher = ({
     rejCol,
     handleParsing,
     handleValidate,
+    handleAll,
+    // handleSelected,
     
 }) => {
     const theme = useTheme();
@@ -110,18 +112,20 @@ const MissionMatcher = ({
                         </Button>
                     </Box>
                     <Box>
-                        <Button
+                        {/* <Button
                             variant="outlined"
                             disableElevation
                             color="success"
+                            onClick={handleSelected}
                             sx={{ mr: 2 }}
                         >
                             {keyword}选中
-                        </Button>
+                        </Button> */}
                         <Button
                             variant="contained"
                             disableElevation
                             color="success"
+                            onClick={handleAll}
                             // color="primrary"
                         >
                             {keyword}所有
@@ -230,6 +234,7 @@ MissionMatcher.propTypes = {
     rejCol: PropTypes.array,
     handleParsing: PropTypes.func,
     handleValidate: PropTypes.func,
+    handleAll: PropTypes.func,
 };
 
 export default MissionMatcher;

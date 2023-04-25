@@ -8,8 +8,8 @@ export default class ApiClient {
   async request(options) {
     let response = await this.requestInternal(options);
     if (response.status === 401 && options.url !== '/tokens') {
-      console.log(localStorage.getItem('accessToken'))
-      console.log(localStorage.getItem('refreshToken'))
+      // console.log(localStorage.getItem('accessToken'))
+      // console.log(localStorage.getItem('refreshToken'))
       const refreshResponse = await this.put('/tokens', {
         access_token: localStorage.getItem('accessToken'),
         refresh_token: localStorage.getItem('refreshToken')

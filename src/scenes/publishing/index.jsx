@@ -6,6 +6,7 @@ import { useGlobal } from "../../contexts/GlobalProvider";
 // import { useState, useEffect } from "react";
 import { Box, Chip } from "@mui/material";
 import moment from "moment";
+import { useFlash } from "../../contexts/FlashProvider";
 
 const missionSchema = yup.object().shape({
     id: yup.number().required(),
@@ -53,7 +54,8 @@ const missionSchema = yup.object().shape({
 const Publishing = () => {
     // const theme = useTheme();
     // const colors = tokens(theme.palette.mode);
-    const { api, setMissions } = useGlobal();
+    const { api, missions, setMissions } = useGlobal();
+    const flash = useFlash();
 
     const getAccountInfo = async (accountName) => {
         const response = await api.get(`/accounts/${accountName}`);
@@ -65,6 +67,73 @@ const Publishing = () => {
             return { error: "没有账号所有权" };
         } else if (response.status === 404) {
             return { error: "账号不存在" };
+        }
+    };
+
+    const publishMission = async (account_id, mission) => {
+        const response = await api.post(
+            `/accounts/${account_id}/publish_mission`,
+            mission
+        );
+        if (response.ok) {
+            const results = await response.body;
+            return results;
+        } else {
+            let message;
+            switch (response.status) {
+                case 400:
+                    console.log(response);
+                    if (
+                        response.body.description ===
+                        "Mission already published"
+                    ) {
+                        message = "请勿重复发送";
+                    } else {
+                        message = "任务格式错误";
+                    }
+                    break;
+                case 401:
+                    message = "没有账号所有权";
+                    break;
+                case 403:
+                    message = "账号未激活";
+                    break;
+                case 404:
+                    message = "账号不存在";
+                    break;
+                default:
+                    message = `HTTP ${response.status} Error`;
+            }
+            return { error: message };
+        }
+    };
+
+    const checkPublishStatus = async (mission) => {
+        const response = await api.get(
+            `/accounts/${mission.account_id}/missions`
+        );
+        if (response.ok) {
+            const results = await response.body;
+            // console.log(results)
+            let result = {};
+            results.data.some((entry) => {
+                // console.log(entry);
+                // console.log(mission);
+                const check = [
+                    mission.title === entry.name,
+                    mission.galaxy === entry.galaxy,
+                    moment(mission.created).utc().format() === entry.created,
+                ];
+                // console.log(check.every((e) => e))
+                if (check.every((e) => e)) {
+                    // console.log({ match: true, ...entry });
+                    result = { match: true, ...entry };
+                    return true;
+                }
+            });
+            return result === {} ? { match: false } : result;
+        } else if (response.status === 404) {
+            return { match: false, error: "账号不存在" };
         }
     };
 
@@ -89,42 +158,137 @@ const Publishing = () => {
         const lst_str = jsonfy.split("\\n");
         const missions_checked = await Promise.all(
             lst_str.map(async (line, index) => {
-                let lineArray = line.split("\\t");
-                const mission = {
-                    id: index,
-                    name: lineArray[0],
-                    type: lineArray[1],
-                    // no_jump: lineArray[2],
-                    galaxy: lineArray[3],
-                    // system: lineArray[4],
-                    region: lineArray[5],
-                    created: lineArray[6],
-                    account_name: lineArray[8],
-                };
-                const mission_checked = await validateMission(mission); // await here
-                const ret = await getAccountInfo(mission_checked.account_name); // await here
+                try {
+                    let lineArray = line.split("\\t");
+                    const mission = {
+                        id: index,
+                        name: lineArray[0],
+                        type: lineArray[1],
+                        // no_jump: lineArray[2],
+                        galaxy: lineArray[3],
+                        // system: lineArray[4],
+                        region: lineArray[5],
+                        created: lineArray[6],
+                        account_name: lineArray[8],
+                    };
+                    const mission_checked = await validateMission(mission); // await here
+                    let ret = await getAccountInfo(
+                        mission_checked.account_name
+                    ); // await here
 
-                if (ret.error != undefined) {
-                    mission_checked.account_status = "错误";
-                    mission_checked.error = ret.error;
-                }
-                if (ret.activated != undefined) {
-                    mission_checked.account_id = ret.id;
-                    if (ret.activated) {
-                        mission_checked.account_status = "已激活";
-                        
-                    } else {
-                        mission_checked.account_status = "未激活";
-                        mission_checked.error = "账号未激活";
+                    if (ret.error != undefined) {
+                        mission_checked.account_status = "错误";
+                        mission_checked.error = ret.error;
                     }
+                    if (ret.activated != undefined) {
+                        mission_checked.account_id = ret.id;
+                        if (ret.activated) {
+                            mission_checked.account_status = "已激活";
+                        } else {
+                            mission_checked.account_status = "未激活";
+                            mission_checked.error = "账号未激活";
+                        }
+                    }
+                    if (mission_checked.account_status === "已激活") {
+                        // console.log(`处理任务:${index}`);
+                        ret = await checkPublishStatus(mission_checked);
+                        // console.log(`处理完成:${index}`);
+                        // console.log(ret);
+                        if (ret.match) {
+                            mission_checked.mission_status = ret.status;
+                            mission_checked.mission_id = ret.id;
+                            mission_checked.published = ret.published;
+                            mission_checked.expired = ret.expired;
+                            mission_checked.bounty = ret.bounty;
+                        } else {
+                            ret.error != undefined &&
+                                (mission_checked.error = ret.error);
+                        }
+                    }
+                    return mission_checked;
+                } catch (error) {
+                    error != undefined && console.log(error);
                 }
-                return mission_checked;
             })
         );
 
         // console.log(missions_checked);
         setMissions(missions_checked);
     };
+
+    const handleAll = async () => {
+        let missions_deepcopy = JSON.parse(JSON.stringify(missions));
+
+        let accept_dc = missions_deepcopy.filter(
+            (mission) =>
+                !mission.error && mission.mission_status === "not_published"
+        );
+        let success_count = 0;
+        let failure_count = 0;
+        // console.log(accept_dc)
+        if (accept_dc.length === 0) {
+            flash("没有可以发布的任务", "info", 10);
+        } else {
+            await Promise.all(
+                accept_dc.map(async (mission) => {
+                    // console.log(`处理任务:${index}`);
+                    // console.log(mission.account_id)
+                    // console.log(mission)
+                    let msg = {
+                        title: mission.name,
+                        galaxy: mission.galaxy,
+                        created: moment(mission.created).utc().format(),
+                        expired: moment(mission.created)
+                            .add(7, "days")
+                            .utc()
+                            .format(),
+                        bounty: 0,
+                    };
+                    // console.log(msg);
+                    const ret = await publishMission(mission.account_id, msg);
+                    // console.log(`发布完成:${index}`);
+                    // console.log(ret);
+                    if (ret.error != undefined) {
+                        mission.mission_status = "error";
+                        mission.error = ret.error;
+                        failure_count += 0;
+                    } else {
+                        mission.mission_status = ret.status;
+                        mission.mission_id = ret.id;
+                        mission.published = ret.published;
+                        mission.expired = ret.expired;
+                        mission.bounty = ret.bounty;
+                        success_count += 1;
+                    }
+                    // console.log(`处理完成:${index}`);
+                    // console.log(ret);
+                    return mission;
+                })
+            );
+            setMissions(missions_deepcopy);
+            if (failure_count > 0) {
+                flash(
+                    `成功发布${success_count}个任务，失败${failure_count}个。请检查输入`,
+                    "error",
+                    10
+                );
+            } else {
+                flash(`成功发布${success_count}个任务`, "success", 10);
+            }
+        }
+
+        // console.log(`处理结束！${result}`);
+        // console.log(missions_deepcopy);
+        // const missions_update = missions.map((val) => {
+        //     if (val.mission_status === "not_published") {
+        //         return { ...val, mission_status: "published" };
+        //     }
+        //     return val;
+        // });
+        setMissions(missions_deepcopy);
+    };
+
+    const handleSelected = () => {};
 
     // useEffect(() => {
     //     // console.log(missions
@@ -155,11 +319,12 @@ const Publishing = () => {
         field: "id",
         headerName: "ID",
         flex: 0.5,
-        renderCell: ({ row: { id, mission_status } }) => {
+        renderCell: ({ row: { mission_id, mission_status } }) => {
+            // console.log(mission_id);
             return mission_status === "not_published" ? (
                 <Box>--</Box>
             ) : (
-                <Box>{id}</Box>
+                <Box>{mission_id}</Box>
             );
         },
     };
@@ -280,28 +445,79 @@ const Publishing = () => {
         renderCell: ({ row: { mission_status } }) => {
             // console.log(mission_status);
             const checkStatus = () => {
-                if (mission_status === " published") {
-                    return {
-                        label: "发布成功",
-                        color: "success",
-                        variant: "outlined",
-                    };
-                } else if (mission_status === "not_published") {
-                    return { label: "未发布", variant: "outlined" };
-                } else if (mission_status === "fault") {
-                    return {
-                        label: "发布错误",
-                        color: "error",
-                        variant: "outlined",
-                    };
-                } else return { lable: "检查中", variant: "outlined" };
+                // if (mission_status === "published") {
+                //     return {
+                //         label: "发布中",
+                //         color: "success",
+                //         // variant: "outlined",
+                //     };
+                // } else if (mission_status === "not_published") {
+                //     return { label: "未发布", variant: "outlined" };
+                // } else if (mission_status === "fault") {
+                //     return {
+                //         label: "错误",
+                //         color: "error",
+                //         variant: "outlined",
+                //     };
+                // } else return { lable: "检查中", variant: "outlined" };
+
+                switch (mission_status) {
+                    case "not_published":
+                        return { label: "未发布", variant: "outlined" };
+                    case "published":
+                        return {
+                            label: "发布中",
+                            color: "success",
+                            // variant: "outlined",
+                        };
+                    case "accepted":
+                        return {
+                            label: "已接受",
+                            color: "success",
+                            variant: "outlined",
+                        };
+                    case "completed":
+                        return {
+                            label: "已完成",
+                            color: "success",
+                            variant: "outlined",
+                        };
+                    case "paid":
+                        return {
+                            label: "已支付",
+                            color: "success",
+                            variant: "outlined",
+                        };
+                    case "archived":
+                        return {
+                            label: "已归档",
+                            variant: "outlined",
+                        };
+                    case "done":
+                        return {
+                            label: "已付清",
+                            variant: "outlined",
+                        };
+                    case "fault":
+                        return {
+                            label: "错误",
+                            color: "error",
+                            variant: "outlined",
+                        };
+                    default:
+                        return {
+                            lable: "检查中",
+                            variant: "outlined",
+                        };
+                }
             };
             // let status = checkStatus();
+            // console.log(checkStatus());
             return (
                 <Chip
                     label={checkStatus().label}
                     color={checkStatus().color}
-                    variant="outlined"
+                    variant={checkStatus().variant}
                 />
             );
         },
@@ -321,7 +537,6 @@ const Publishing = () => {
     //     align: "center",
     //     flex: 1,
     // };
-
 
     const columns = [
         id_field,
@@ -358,6 +573,8 @@ const Publishing = () => {
                 handleParsing={handleParsing}
                 columns={columns}
                 rejCol={rejCol}
+                handleAll={handleAll}
+                handleSelected={handleSelected}
             />
         </Body>
     );

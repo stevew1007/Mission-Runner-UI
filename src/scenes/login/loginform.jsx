@@ -36,20 +36,24 @@ const LoginForm = () => {
     const handleFormSubmit = async (values, onSubmit) => {
         onSubmit.setSubmitting(true);
         const result = await login(values.username, values.password);
-        if (result === 'fail') {
-            onSubmit.setSubmitting(false);
-            onSubmit.setFieldValue("password", "", false);
-            flash("用户名或密码错误", "error", 10);
-        }
-        else if (result === 'ok') {
-            flash("登录成功", "success");
+        if (result === 'ok') {
+            flash("登录成功", "success", 10);
             formik.setSubmitting(false);
             let next = "/";
             if (location.state && location.state.next) {
                 next = location.state.next;
             }
             navigate(next);
+        } else if (result === 'fail') {
+            onSubmit.setSubmitting(false);
+            onSubmit.setFieldValue("password", "", false);
+            flash("用户名或密码错误", "error", 10);
+        } else {
+            onSubmit.setSubmitting(false);
+            onSubmit.setFieldValue("password", "", false);
+            flash(`网络错误 HTTP ${result}`, "error", 10);
         }
+         
     };
 
     const formik = useFormik({

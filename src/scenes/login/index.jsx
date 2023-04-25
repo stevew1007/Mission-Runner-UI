@@ -13,6 +13,7 @@ import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import { useGlobal } from "../../contexts/GlobalProvider";
 import LoginForm from "./loginform";
+import FlashMessage from "../../components/FlashMessage";
 
 const StyledContent = styled("div")(({ theme }) => ({
     maxWidth: 480,
@@ -79,6 +80,7 @@ const LoginPage = () => {
                     没有账号？
                     <Link variant="subtitle2" href="/register">注册</Link>
                 </Typography>
+                <FlashMessage />
                 <LoginForm />
             </StyledContent>
         </Box>

@@ -29,7 +29,7 @@ export default function UserProvider({ children }) {
         if (result === 'ok') {
             const response = await api.get("/me");
             setUser(response.ok ? {...response.body, background:'#'+(0x1000000+Math.random()*0xffffff).toString(16).substr(1,6)} : null);
-            return response.ok;
+            return result;
         }
         return result;
     };
