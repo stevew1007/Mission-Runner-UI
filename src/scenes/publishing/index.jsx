@@ -1,12 +1,23 @@
-import { mockDataTeam } from "../../data/mockData";
 import * as yup from "yup";
 import Body from "../../components/Body";
 import MissionMatcher from "../../components/MissionMatcher";
 import { useGlobal } from "../../contexts/GlobalProvider";
 // import { useState, useEffect } from "react";
-import { Box, Chip } from "@mui/material";
 import moment from "moment";
 import { useFlash } from "../../contexts/FlashProvider";
+import {
+    account_name_field,
+    account_status_field,
+    created_field,
+    error_field,
+    expired_field,
+    galaxy_field,
+    id_field,
+    mission_status_field,
+    name_field,
+    region_field,
+} from "../../data/columnsFieldSetting";
+import { useState } from "react";
 
 const missionSchema = yup.object().shape({
     id: yup.number().required(),
@@ -52,10 +63,11 @@ const missionSchema = yup.object().shape({
 });
 
 const Publishing = () => {
-    // const theme = useTheme();
-    // const colors = tokens(theme.palette.mode);
-    const { api, missions, setMissions } = useGlobal();
+
+    const { api } = useGlobal();
     const flash = useFlash();
+    const [missions, setMissions] = useState();
+    // setMissions()
 
     const getAccountInfo = async (accountName) => {
         const response = await api.get(`/accounts/${accountName}`);
@@ -82,13 +94,17 @@ const Publishing = () => {
             let message;
             switch (response.status) {
                 case 400:
-                    console.log(response);
+                    // console.log(response);
                     if (
                         response.body.description ===
                         "Mission already published"
                     ) {
                         message = "请勿重复发送";
-                    } else {
+                    } else if (response.body.description ===
+                        "Expired time is invalid"){
+                        message = "过期时间错误";
+                    } else
+                    {
                         message = "任务格式错误";
                     }
                     break;
@@ -244,7 +260,7 @@ const Publishing = () => {
                             .format(),
                         bounty: 0,
                     };
-                    // console.log(msg);
+                    console.log(msg);
                     const ret = await publishMission(mission.account_id, msg);
                     // console.log(`发布完成:${index}`);
                     // console.log(ret);
@@ -276,16 +292,6 @@ const Publishing = () => {
                 flash(`成功发布${success_count}个任务`, "success", 10);
             }
         }
-
-        // console.log(`处理结束！${result}`);
-        // console.log(missions_deepcopy);
-        // const missions_update = missions.map((val) => {
-        //     if (val.mission_status === "not_published") {
-        //         return { ...val, mission_status: "published" };
-        //     }
-        //     return val;
-        // });
-        setMissions(missions_deepcopy);
     };
 
     const handleSelected = () => {};
@@ -315,228 +321,228 @@ const Publishing = () => {
     //     })();
     // }, [missions]);
 
-    const id_field = {
-        field: "id",
-        headerName: "ID",
-        flex: 0.5,
-        renderCell: ({ row: { mission_id, mission_status } }) => {
-            // console.log(mission_id);
-            return mission_status === "not_published" ? (
-                <Box>--</Box>
-            ) : (
-                <Box>{mission_id}</Box>
-            );
-        },
-    };
-    const name_field = {
-        field: "name",
-        headerName: "Name",
-        flex: 2.2,
-        cellClassName: "name-column--cell",
-    };
-    // const mission_type_field = {
-    //     field: "mission_type",
-    //     headerName: "任务类型",
-    //     flex: 3,
-    //     renderCell: ({ row: { name } }) => {
-    //         let pattern = [
-    //             /^(Sansha|Angel|Serpentis|Guristas|Blood Raider) Anomic Site \( Warp Gate \)*?$/,
-    //             /^(萨沙|天使|古斯塔斯|血袭者)?混乱地点\*? \( 跃迁门\*? \)$/,
-    //             /^(Warp Gate)\*?/,
-    //             /^(跃迁门)\*?$/,
-    //         ];
-    //         let output = pattern.map((value) => {
-    //             let result = name.match(value);
-    //             if (result != null) {
-    //                 // console.log(result[1]);
-    //                 return result[1];
-    //             }
-    //         });
-    //         return <Box>{output}</Box>;
+    // const id_field = {
+    //     field: "id",
+    //     headerName: "ID",
+    //     flex: 0.5,
+    //     renderCell: ({ row: { mission_id, mission_status } }) => {
+    //         // console.log(mission_id);
+    //         return mission_status === "not_published" ? (
+    //             <Box>--</Box>
+    //         ) : (
+    //             <Box>{mission_id}</Box>
+    //         );
     //     },
     // };
-    const account_name_field = {
-        field: "account_name",
-        headerName: "发布账号",
-        headerAlign: "center",
-        align: "center",
-        flex: 1.5,
-    };
-    const account_status_field = {
-        field: "account_status",
-        headerName: "账号状态",
-        headerAlign: "center",
-        align: "center",
-        flex: 1.5,
-        renderCell: ({ row: { account_status } }) => {
-            const checkStatus = () => {
-                if (account_status === "已激活") {
-                    return {
-                        label: "已激活",
-                        color: "success",
-                        variant: "outlined",
-                    };
-                } else if (account_status === "未激活") {
-                    return { label: "未激活", variant: "outlined" };
-                } else if (account_status === "错误") {
-                    return {
-                        label: "错误",
-                        color: "error",
-                        variant: "outlined",
-                    };
-                } else return { lable: "检查中", variant: "outlined" };
-            };
-            // let status = checkStatus();
-            return (
-                <Chip
-                    label={checkStatus().label}
-                    color={checkStatus().color}
-                    variant="outlined"
-                />
-            );
-        },
-    };
-    const galaxy_field = {
-        field: "galaxy",
-        headerName: "星系",
-        headerAlign: "center",
-        align: "center",
-    };
-    const region_field = {
-        field: "region",
-        headerName: "星域",
-        headerAlign: "center",
-        align: "center",
-        flex: 1,
-    };
-    const created_field = {
-        field: "created",
-        headerName: "信标创建",
-        type: "number",
-        headerAlign: "center",
-        align: "center",
-        flex: 1,
-        renderCell: ({ row: { created } }) => {
-            // console.log(created)
-            return <Box>{moment(created).fromNow()}</Box>;
-        },
-    };
-    const expired_field = {
-        field: "expired",
-        headerName: "过期时间",
-        type: "number",
-        headerAlign: "center",
-        align: "center",
-        flex: 1,
-        renderCell: ({ row: { expired, mission_status } }) => {
-            return mission_status === "not_published" ? (
-                <Box>--</Box>
-            ) : (
-                <Box>{moment(expired).fromNow()}</Box>
-            );
-        },
-    };
-    const mission_status_field = {
-        field: "status",
-        headerName: "发布状态",
-        headerAlign: "center",
-        align: "center",
-        flex: 1,
-        renderCell: ({ row: { mission_status } }) => {
-            // console.log(mission_status);
-            const checkStatus = () => {
-                // if (mission_status === "published") {
-                //     return {
-                //         label: "发布中",
-                //         color: "success",
-                //         // variant: "outlined",
-                //     };
-                // } else if (mission_status === "not_published") {
-                //     return { label: "未发布", variant: "outlined" };
-                // } else if (mission_status === "fault") {
-                //     return {
-                //         label: "错误",
-                //         color: "error",
-                //         variant: "outlined",
-                //     };
-                // } else return { lable: "检查中", variant: "outlined" };
-
-                switch (mission_status) {
-                    case "not_published":
-                        return { label: "未发布", variant: "outlined" };
-                    case "published":
-                        return {
-                            label: "发布中",
-                            color: "success",
-                            // variant: "outlined",
-                        };
-                    case "accepted":
-                        return {
-                            label: "已接受",
-                            color: "success",
-                            variant: "outlined",
-                        };
-                    case "completed":
-                        return {
-                            label: "已完成",
-                            color: "success",
-                            variant: "outlined",
-                        };
-                    case "paid":
-                        return {
-                            label: "已支付",
-                            color: "success",
-                            variant: "outlined",
-                        };
-                    case "archived":
-                        return {
-                            label: "已归档",
-                            variant: "outlined",
-                        };
-                    case "done":
-                        return {
-                            label: "已付清",
-                            variant: "outlined",
-                        };
-                    case "fault":
-                        return {
-                            label: "错误",
-                            color: "error",
-                            variant: "outlined",
-                        };
-                    default:
-                        return {
-                            lable: "检查中",
-                            variant: "outlined",
-                        };
-                }
-            };
-            // let status = checkStatus();
-            // console.log(checkStatus());
-            return (
-                <Chip
-                    label={checkStatus().label}
-                    color={checkStatus().color}
-                    variant={checkStatus().variant}
-                />
-            );
-        },
-    };
-    const error_field = {
-        field: "error",
-        headerName: "报错",
-        headerAlign: "center",
-        align: "center",
-        flex: 1,
-    };
-
-    // const accid_field = {
-    //     field: "account_id",
-    //     headerName: "ACC ID",
+    // const name_field = {
+    //     field: "name",
+    //     headerName: "Name",
+    //     flex: 2.2,
+    //     cellClassName: "name-column--cell",
+    // };
+    // // const mission_type_field = {
+    // //     field: "mission_type",
+    // //     headerName: "任务类型",
+    // //     flex: 3,
+    // //     renderCell: ({ row: { name } }) => {
+    // //         let pattern = [
+    // //             /^(Sansha|Angel|Serpentis|Guristas|Blood Raider) Anomic Site \( Warp Gate \)*?$/,
+    // //             /^(萨沙|天使|古斯塔斯|血袭者)?混乱地点\*? \( 跃迁门\*? \)$/,
+    // //             /^(Warp Gate)\*?/,
+    // //             /^(跃迁门)\*?$/,
+    // //         ];
+    // //         let output = pattern.map((value) => {
+    // //             let result = name.match(value);
+    // //             if (result != null) {
+    // //                 // console.log(result[1]);
+    // //                 return result[1];
+    // //             }
+    // //         });
+    // //         return <Box>{output}</Box>;
+    // //     },
+    // // };
+    // const account_name_field = {
+    //     field: "account_name",
+    //     headerName: "发布账号",
+    //     headerAlign: "center",
+    //     align: "center",
+    //     flex: 1.5,
+    // };
+    // const account_status_field = {
+    //     field: "account_status",
+    //     headerName: "账号状态",
+    //     headerAlign: "center",
+    //     align: "center",
+    //     flex: 1.5,
+    //     renderCell: ({ row: { account_status } }) => {
+    //         const checkStatus = () => {
+    //             if (account_status === "已激活") {
+    //                 return {
+    //                     label: "已激活",
+    //                     color: "success",
+    //                     variant: "outlined",
+    //                 };
+    //             } else if (account_status === "未激活") {
+    //                 return { label: "未激活", variant: "outlined" };
+    //             } else if (account_status === "错误") {
+    //                 return {
+    //                     label: "错误",
+    //                     color: "error",
+    //                     variant: "outlined",
+    //                 };
+    //             } else return { lable: "检查中", variant: "outlined" };
+    //         };
+    //         // let status = checkStatus();
+    //         return (
+    //             <Chip
+    //                 label={checkStatus().label}
+    //                 color={checkStatus().color}
+    //                 variant="outlined"
+    //             />
+    //         );
+    //     },
+    // };
+    // const galaxy_field = {
+    //     field: "galaxy",
+    //     headerName: "星系",
+    //     headerAlign: "center",
+    //     align: "center",
+    // };
+    // const region_field = {
+    //     field: "region",
+    //     headerName: "星域",
     //     headerAlign: "center",
     //     align: "center",
     //     flex: 1,
     // };
+    // const created_field = {
+    //     field: "created",
+    //     headerName: "信标创建",
+    //     type: "number",
+    //     headerAlign: "center",
+    //     align: "center",
+    //     flex: 1,
+    //     renderCell: ({ row: { created } }) => {
+    //         // console.log(created)
+    //         return <Box>{moment(created).fromNow()}</Box>;
+    //     },
+    // };
+    // const expired_field = {
+    //     field: "expired",
+    //     headerName: "过期时间",
+    //     type: "number",
+    //     headerAlign: "center",
+    //     align: "center",
+    //     flex: 1,
+    //     renderCell: ({ row: { expired, mission_status } }) => {
+    //         return mission_status === "not_published" ? (
+    //             <Box>--</Box>
+    //         ) : (
+    //             <Box>{moment(expired).fromNow()}</Box>
+    //         );
+    //     },
+    // };
+    // const mission_status_field = {
+    //     field: "status",
+    //     headerName: "发布状态",
+    //     headerAlign: "center",
+    //     align: "center",
+    //     flex: 1,
+    //     renderCell: ({ row: { mission_status } }) => {
+    //         // console.log(mission_status);
+    //         const checkStatus = () => {
+    //             // if (mission_status === "published") {
+    //             //     return {
+    //             //         label: "发布中",
+    //             //         color: "success",
+    //             //         // variant: "outlined",
+    //             //     };
+    //             // } else if (mission_status === "not_published") {
+    //             //     return { label: "未发布", variant: "outlined" };
+    //             // } else if (mission_status === "fault") {
+    //             //     return {
+    //             //         label: "错误",
+    //             //         color: "error",
+    //             //         variant: "outlined",
+    //             //     };
+    //             // } else return { lable: "检查中", variant: "outlined" };
+
+    //             switch (mission_status) {
+    //                 case "not_published":
+    //                     return { label: "未发布", variant: "outlined" };
+    //                 case "published":
+    //                     return {
+    //                         label: "发布中",
+    //                         color: "success",
+    //                         // variant: "outlined",
+    //                     };
+    //                 case "accepted":
+    //                     return {
+    //                         label: "已接受",
+    //                         color: "success",
+    //                         variant: "outlined",
+    //                     };
+    //                 case "completed":
+    //                     return {
+    //                         label: "已完成",
+    //                         color: "success",
+    //                         variant: "outlined",
+    //                     };
+    //                 case "paid":
+    //                     return {
+    //                         label: "已支付",
+    //                         color: "success",
+    //                         variant: "outlined",
+    //                     };
+    //                 case "archived":
+    //                     return {
+    //                         label: "已归档",
+    //                         variant: "outlined",
+    //                     };
+    //                 case "done":
+    //                     return {
+    //                         label: "已付清",
+    //                         variant: "outlined",
+    //                     };
+    //                 case "fault":
+    //                     return {
+    //                         label: "错误",
+    //                         color: "error",
+    //                         variant: "outlined",
+    //                     };
+    //                 default:
+    //                     return {
+    //                         lable: "检查中",
+    //                         variant: "outlined",
+    //                     };
+    //             }
+    //         };
+    //         // let status = checkStatus();
+    //         // console.log(checkStatus());
+    //         return (
+    //             <Chip
+    //                 label={checkStatus().label}
+    //                 color={checkStatus().color}
+    //                 variant={checkStatus().variant}
+    //             />
+    //         );
+    //     },
+    // };
+    // const error_field = {
+    //     field: "error",
+    //     headerName: "报错",
+    //     headerAlign: "center",
+    //     align: "center",
+    //     flex: 1,
+    // };
+
+    // // const accid_field = {
+    // //     field: "account_id",
+    // //     headerName: "ACC ID",
+    // //     headerAlign: "center",
+    // //     align: "center",
+    // //     flex: 1,
+    // // };
 
     const columns = [
         id_field,
@@ -569,12 +575,12 @@ const Publishing = () => {
         <Body topbar={true} title="发布任务" subtitle="求求老板们快去做点吧">
             <MissionMatcher
                 keyword="发布"
-                identified={mockDataTeam}
-                handleParsing={handleParsing}
                 columns={columns}
                 rejCol={rejCol}
+                handleParsing={handleParsing}
                 handleAll={handleAll}
                 handleSelected={handleSelected}
+                missions={missions}
             />
         </Body>
     );

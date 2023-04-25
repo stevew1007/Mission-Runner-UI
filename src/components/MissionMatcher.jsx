@@ -15,17 +15,18 @@ const MissionMatcher = ({
     handleParsing,
     handleValidate,
     handleAll,
+    missions,
     // handleSelected,
     
 }) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
-    const { missions } = useGlobal();
+    // const { missions } = useGlobal();
     const apiRefAcc = useGridApiRef();
     // const apiRefRej = useGridApiRef();
 
     const [entryState, setEntryState] = useState({
-        value: mockDataMission,
+        value: "",
         error: false,
         helperText: " ",
         showRej: false,
@@ -56,6 +57,7 @@ const MissionMatcher = ({
 
     useEffect(() => {
         if (missions != undefined) {
+            // console.log(missions)
             let mission_deepcopy = JSON.parse(JSON.stringify(missions));
 
             let accept_dc = mission_deepcopy.filter(
@@ -180,7 +182,7 @@ const MissionMatcher = ({
                 <>
                     <Box mt={2}>
                         <Typography variant="h7">
-                            无法处理(检查输入或者联系管理员):
+                            无法处理(请检查输入或者联系管理员):
                         </Typography>
                     </Box>
 

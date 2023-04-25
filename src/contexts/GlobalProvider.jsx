@@ -17,8 +17,6 @@ const GlobalProvider = ({ children }) => {
 
     const api = new ApiClient();
 
-    const [missions, setMissions] = useState();
-
     return (
         <globalContext.Provider
             value={{
@@ -27,8 +25,6 @@ const GlobalProvider = ({ children }) => {
                 sidebarOpened,
                 toggleSidebar,
                 api,
-                missions,
-                setMissions
             }}
         >
             {children}
