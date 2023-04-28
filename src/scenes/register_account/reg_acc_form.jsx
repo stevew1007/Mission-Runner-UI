@@ -33,7 +33,13 @@ const RegisterAccountForm = () => {
         const result = await api.post("/accounts", sending);
         if (!result.ok) {
             onSubmit.setSubmitting(false);
-            flash(`注册出错 HTTP : ${result.status}, 请重试`, "error", 10);
+            if (result.status === 404) {
+                flash("需要输入真实的角色名", "error", 10);
+            } else {
+                flash(`注册出错 HTTP : ${result.status}, 请重试`, "error", 10);
+            }
+            
+            
         } else {
             flash("注册成功, 请联系管理员激活", "success");
             formik.setValues(initialValues);

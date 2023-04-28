@@ -5,6 +5,16 @@ export const id_field = {
     field: "id",
     headerName: "ID",
     flex: 0.5,
+    renderCell: ({ row: { id } }) => {
+        // console.log(mission_id);
+        return <Box>{id}</Box>
+    },
+};
+
+export const mission_id_field = {
+    field: "id",
+    headerName: "ID",
+    flex: 0.5,
     renderCell: ({ row: { mission_id, mission_status } }) => {
         // console.log(mission_id);
         return mission_status === "not_published" ? (
@@ -18,6 +28,13 @@ export const id_field = {
 export const name_field = {
     field: "name",
     headerName: "Name",
+    flex: 2.2,
+    cellClassName: "name-column--cell",
+};
+
+export const title_field = {
+    field: "title",
+    headerName: "任务",
     flex: 2.2,
     cellClassName: "name-column--cell",
 };

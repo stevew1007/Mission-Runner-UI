@@ -20,6 +20,7 @@ import AdminRoute from "./components/AdminRoute";
 import AdminSetRole from "./scenes/admin_setrole";
 import AdminActivateAccount from "./scenes/admin_activateaccount";
 import AdminAudit from "./scenes/admin_audit";
+import Paying from "./scenes/paying";
 
 function App() {
     const { mode } = useGlobal();
@@ -88,6 +89,10 @@ function App() {
                                         <Route
                                             path="/publishing"
                                             element={<Publishing />}
+                                        />
+                                        <Route
+                                            path="/paying"
+                                            element={<Paying />} 
                                         />
                                         <Route
                                             path="/running"

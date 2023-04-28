@@ -3,10 +3,7 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { DataGrid, useGridApiRef } from "@mui/x-data-grid";
 import { tokens } from "../theme";
 import PropTypes from "prop-types";
-
-import { mockDataMission, mockDataMissionSingle } from "../data/mockData";
 import { useEffect, useState } from "react";
-import { useGlobal } from "../contexts/GlobalProvider";
 
 const MissionMatcher = ({
     keyword,
@@ -237,6 +234,7 @@ MissionMatcher.propTypes = {
     handleParsing: PropTypes.func,
     handleValidate: PropTypes.func,
     handleAll: PropTypes.func,
+    missions: PropTypes.array,
 };
 
 export default MissionMatcher;

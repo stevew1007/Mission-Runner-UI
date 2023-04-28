@@ -4,8 +4,6 @@ import { useGlobal } from "../../contexts/GlobalProvider";
 import MissionMatcher from "../../components/MissionMatcher";
 import moment from "moment";
 import {
-    account_name_field,
-    account_status_field,
     created_field,
     error_field,
     expired_field,
@@ -17,6 +15,7 @@ import {
 } from "../../data/columnsFieldSetting";
 import { useFlash } from "../../contexts/FlashProvider";
 import { useState } from "react";
+import { useUser } from "../../contexts/UserProvider";
 
 const missionSchema = yup.object().shape({
     id: yup.number().required(),
@@ -55,7 +54,7 @@ const missionSchema = yup.object().shape({
         .required(),
     region: yup
         .string()
-        .oneOf(["维纳尔", "	Venal"], "不在任务星系内")
+        .oneOf(["维纳尔", "Venal"], "不在任务星域内")
         .required(),
     created: yup.date().max(new Date(), "坐标创建时间异常").required(),
     account_name: yup.string().required(),
@@ -63,17 +62,18 @@ const missionSchema = yup.object().shape({
 
 const Running = () => {
     const { api } = useGlobal();
+    const { user } = useUser();
     const flash = useFlash();
     const [missions, setMissions] = useState();
     // setMissions();
 
     const checkPublishStatus = async (mission) => {
-        const response = await api.get(`/missions/${mission.galaxy}`);
+        const response = await api.get(`/missions/galaxy/${mission.galaxy}`);
         if (response.ok) {
-            const results = await response.body;
-            // console.log(results);
+            const rv = await response.body;
+            console.log(rv);
             let result = {};
-            results.data.some((entry) => {
+            rv.data.some((entry) => {
                 // console.log(entry);
                 // console.log(mission);
                 const check = [
@@ -88,7 +88,7 @@ const Running = () => {
                     return true;
                 }
             });
-            return result === {} ? { match: false } : result;
+            return result != {} ? result : { match: false };
         } else if (response.status === 404) {
             return { match: false, error: "账号不存在" };
         }
@@ -104,7 +104,6 @@ const Running = () => {
             } else {
                 return { error: "获取数据失败" };
             }
-
         } else {
             let message;
             switch (response.status) {
@@ -147,13 +146,18 @@ const Running = () => {
             // console.log(error);
             const validationError = error.inner
                 .map((e) => e.message)
-                .concat(error.message);
+                // .concat(error.message);
             const withError = { ...mission, error: validationError };
             return withError;
         }
     };
 
     const handleParsing = async (entryValue) => {
+        // console.log(user)
+        if (user.default_account_id === null) {
+            flash("未设置付款账号, 请在右上角登记并设置", "error", 200 )
+            return false
+        }
         const jsonfy = JSON.stringify(entryValue).replace(/^"(.*)"$/, "$1");
         const lst_str = jsonfy.split("\\n");
         const missions_checked = await Promise.all(
@@ -175,7 +179,7 @@ const Running = () => {
 
                     let ret = await checkPublishStatus(mission_checked);
                     // console.log(`处理完成:${index}`);
-                    // console.log(ret);
+                    console.log(ret);
                     if (ret.match) {
                         mission_checked.mission_status = ret.status;
                         ret.status != "published" &&
@@ -203,6 +207,7 @@ const Running = () => {
 
     const handleAll = async () => {
         // console.log(await missions)
+        console.log(missions)
         let missions_deepcopy = JSON.parse(JSON.stringify(missions));
 
         let accept_dc = missions_deepcopy.filter(
@@ -216,17 +221,17 @@ const Running = () => {
             flash("没有可以接受的任务", "info", 10);
         } else {
             await Promise.all(
-                accept_dc.map(async (mission, index) => {
-                    console.log(`处理任务:${index}`);
+                accept_dc.map(async (mission) => {
+                    // console.log(`处理任务:${index}`);
                     // console.log(mission.account_id)
-                    console.log(mission)
+                    // console.log(mission)
                     // console.log(msg);
                     const ret = await updateMission(
                         mission.mission_id,
                         "accepted"
                     );
-                    console.log(`接受完成:${index}`);
-                    console.log(ret);
+                    // console.log(`接受完成:${index}`);
+                    // console.log(ret);
                     if (ret.error != undefined) {
                         mission.mission_status = "error";
                         mission.error = ret.error;
@@ -239,8 +244,8 @@ const Running = () => {
                         mission.bounty = ret.bounty;
                         success_count += 1;
                     }
-                    console.log(`处理完成:${index}`);
-                    console.log(ret);
+                    // console.log(`处理完成:${index}`);
+                    // console.log(ret);
                     return mission;
                 })
             );
@@ -255,15 +260,6 @@ const Running = () => {
                 flash(`成功接受${success_count}个任务`, "success", 10);
             }
         }
-
-        // console.log(`处理结束！${result}`);
-        // console.log(missions_deepcopy);
-        // const missions_update = missions.map((val) => {
-        //     if (val.mission_status === "not_published") {
-        //         return { ...val, mission_status: "published" };
-        //     }
-        //     return val;
-        // });
         setMissions(missions_deepcopy);
     };
 

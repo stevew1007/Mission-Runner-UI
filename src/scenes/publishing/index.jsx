@@ -18,6 +18,7 @@ import {
     region_field,
 } from "../../data/columnsFieldSetting";
 import { useState } from "react";
+// import { mockDataMission } from "../../data/mockData";
 
 const missionSchema = yup.object().shape({
     id: yup.number().required(),
@@ -56,7 +57,7 @@ const missionSchema = yup.object().shape({
         .required(),
     region: yup
         .string()
-        .oneOf(["维纳尔", "	Venal"], "不在任务星系内")
+        .oneOf(["维纳尔", "Venal"], "不在任务星域内")
         .required(),
     created: yup.date().max(new Date(), "坐标创建时间异常").required(),
     account_name: yup.string().required(),
@@ -160,10 +161,12 @@ const Publishing = () => {
             const withStatus = { ...mission, mission_status: "not_published" };
             return withStatus;
         } catch (error) {
-            // console.log(error);
+            // console.log(error.inner)
+            console.log(missionSchema.isValidSync(mission))
             const validationError = error.inner
                 .map((e) => e.message)
-                .concat(error.message);
+                // .concat(error.message);
+            console.log(validationError)
             const withError = { ...mission, error: validationError };
             return withError;
         }

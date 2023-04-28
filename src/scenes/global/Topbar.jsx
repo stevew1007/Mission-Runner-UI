@@ -242,7 +242,9 @@ const Topbar = ({ children }) => {
                         <ListItemButton component={NavLink} to="/publishing">
                             发布任务
                         </ListItemButton>
-                        <ListItemButton>费用结算</ListItemButton>
+                        <ListItemButton component={NavLink} to="/paying">
+                            费用结算
+                        </ListItemButton>
                     </List>
                     {user.role != "mission_publisher" && (
                         <Box>
