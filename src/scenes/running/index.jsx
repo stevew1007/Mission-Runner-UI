@@ -107,8 +107,11 @@ const Running = () => {
         } else {
             let message;
             switch (response.status) {
-                case 401:
+                case 400:
                     message = "非法操作";
+                    break;
+                case 401:
+                    message = "任务不属于你";
                     break;
                 case 403:
                     message = "任务已过期";
