@@ -47,6 +47,14 @@ export const account_name_field = {
     flex: 1.5,
 };
 
+export const publisher_field = {
+    field: "publisher",
+    headerName: "发布者",
+    headerAlign: "center",
+    align: "center",
+    flex: 1,
+}
+
 export const account_status_field = {
     field: "account_status",
     headerName: "账号状态",
@@ -100,13 +108,13 @@ export const region_field = {
 export const created_field = {
     field: "created",
     headerName: "信标创建",
-    type: "number",
+    type: "timestamp",
     headerAlign: "center",
-    align: "center",
+    align: "right",
     flex: 1,
     renderCell: ({ row: { created } }) => {
         // console.log(created)
-        return <Box>{moment(created).fromNow()}</Box>;
+        return <Box>{moment(created).format("Y/M/D H:mm")}</Box>;
     },
 };
 
@@ -125,6 +133,25 @@ export const expired_field = {
         );
     },
 };
+
+export const bounty_field = {
+    field: "bounty",
+    headerName: "打手费",
+    type: "number",
+    headerAlign: "center",
+    align: "center",
+    flex: 1.5,
+    renderCell: ({ row: { bounty } }) => {
+        return bounty === undefined ? (
+            <Box>--</Box>
+        ) : (
+            <Box>{new Intl.NumberFormat("is-IS", {
+                style: "currency",
+                currency: "ISK",
+            }).format(bounty)}</Box>
+        );
+    },
+}
 
 export const mission_status_field = {
     field: "status",

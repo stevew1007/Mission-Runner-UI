@@ -1,9 +1,17 @@
 import { useTheme } from "@emotion/react";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import {
+    Box,
+    Button,
+    Grid,
+    InputAdornment,
+    TextField,
+    Typography,
+} from "@mui/material";
 import { DataGrid, useGridApiRef } from "@mui/x-data-grid";
 import { tokens } from "../theme";
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { NumericFormat } from "react-number-format";
 
 const MissionMatcher = ({
     keyword,
@@ -13,13 +21,15 @@ const MissionMatcher = ({
     handleValidate,
     handleAll,
     missions,
+    bounty,
+    setBounty,
     // handleSelected,
-    
 }) => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     // const { missions } = useGlobal();
     const apiRefAcc = useGridApiRef();
+    const inputRef = useRef(null);
     // const apiRefRej = useGridApiRef();
 
     const [entryState, setEntryState] = useState({
@@ -51,6 +61,66 @@ const MissionMatcher = ({
         }
         handleParsing(entryState.value);
     };
+
+    const handleClickAll = () => {
+        if (handleValidate === undefined) {
+            if (entryState.value === "") {
+                updateEntryState({ error: true, helperText: "输入不能为空" });
+                return;
+            }
+        }
+        // console.log('bounty::: ', bounty);
+        if (bounty != undefined) {
+            if (inputRef.current.value === "") {
+                setBounty({
+                    ...bounty,
+                    ...{ error: true, helperText: "输入不能为空" },
+                });
+                return;
+            }
+            let val = parseInt(inputRef.current.value.replace(/,/g, ""));
+            setBounty({ ...bounty, ...{ value: val } });
+        }
+        handleAll();
+    };
+
+    const CustomTextFieldNumeric = (props) => {
+        return (
+            <TextField
+                {...props}
+                size={"small"}
+                variant="standard"
+                sx={{ mr: 2, width: "auto" }}
+                inputProps={{
+                    style: { textAlign: "right" },
+                }}
+            />
+        );
+    };
+
+    // const NumberFormatCustom = forwardRef(function NumberFormatCustom(
+    //     props, ref
+    // ) {
+    //     const { ...other } = props;
+
+    //     return (
+    //         <NumericFormat
+    //             {...other}
+    //             getInputRef={ref}
+    //             // onValueChange={(values) => {
+
+    //             // }}
+    //             thousandSeparator
+    //             isNumericString
+    //         />
+    //     );
+    // });
+
+    // NumberFormatCustom.propTypes = {
+    //     // ref: PropTypes.string,
+    //     name: PropTypes.string,
+    //     onChange: PropTypes.func,
+    // };
 
     useEffect(() => {
         if (missions != undefined) {
@@ -92,15 +162,14 @@ const MissionMatcher = ({
                     error={entryState.error}
                     helperText={entryState.helperText}
                     rows={4}
-                    // placeholder="Test"
                 />
                 <Box
                     display="flex"
                     justifyContent="space-between"
                     // mt={2}
-                    mb="10px"
+                    // mb="10px"
                 >
-                    <Box>
+                    <Box justifyContent="flex" mt="auto" mb="auto">
                         <Button
                             variant="outlined"
                             color="success"
@@ -111,24 +180,61 @@ const MissionMatcher = ({
                         </Button>
                     </Box>
                     <Box>
-                        {/* <Button
-                            variant="outlined"
-                            disableElevation
-                            color="success"
-                            onClick={handleSelected}
-                            sx={{ mr: 2 }}
+                        <Grid
+                            container
+                            direction="row"
+                            justifyContent="flex-start"
+                            alignItems="center"
+                            columnSpacing={2}
                         >
-                            {keyword}选中
-                        </Button> */}
-                        <Button
-                            variant="contained"
-                            disableElevation
-                            color="success"
-                            onClick={handleAll}
-                            // color="primrary"
-                        >
-                            {keyword}所有
-                        </Button>
+                            {bounty != undefined && (
+                                <Grid item width="150px">
+                                    <NumericFormat
+                                        thousandSeparator
+                                        label="默认打手费/任务"
+                                        value={bounty.value}
+                                        error={bounty.error}
+                                        helperText={bounty.helperText}
+                                        onFocus={(e) => e.target.select()}
+                                        // isAllowed={() => true}
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    ISK
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                        customInput={CustomTextFieldNumeric}
+                                        inputRef={inputRef}
+                                    />
+                                </Grid>
+                            )}
+                            {/* <Grid item>
+                                <Button
+                                    variant="outlined"
+                                    disableElevation
+                                    color="success"
+                                    // onClick={handleSelected}
+                                    // sx={{ mr: 2 }}
+                                    sx={{ mt: "auto", mb: "auto" }}
+                                >
+                                    {keyword}选中
+                                </Button>
+                            </Grid> */}
+
+                            <Grid item>
+                                <Button
+                                    variant="contained"
+                                    disableElevation
+                                    color="success"
+                                    onClick={handleClickAll}
+                                    sx={{ mt: "auto", mb: "auto" }}
+                                    // color="primrary"
+                                >
+                                    {keyword}所有
+                                </Button>
+                            </Grid>
+                        </Grid>
                     </Box>
                 </Box>
             </Box>
@@ -235,6 +341,8 @@ MissionMatcher.propTypes = {
     handleValidate: PropTypes.func,
     handleAll: PropTypes.func,
     missions: PropTypes.array,
+    bounty: PropTypes.any,
+    setBounty: PropTypes.func,
 };
 
 export default MissionMatcher;

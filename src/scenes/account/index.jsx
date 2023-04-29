@@ -187,7 +187,7 @@ const Account = () => {
                                 // console.log(
                                 //     `Accounts No.${params.currentTarget.dataset.rowindex} is ${hoverID}`
                                 // );
-                                console.log(user.default_account_id);
+                                // console.log(user.default_account_id);
                             },
                             onMouseLeave: () => {
                                 setHoverID();

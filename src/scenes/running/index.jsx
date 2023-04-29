@@ -4,6 +4,7 @@ import { useGlobal } from "../../contexts/GlobalProvider";
 import MissionMatcher from "../../components/MissionMatcher";
 import moment from "moment";
 import {
+    bounty_field,
     created_field,
     error_field,
     expired_field,
@@ -11,6 +12,7 @@ import {
     id_field,
     mission_status_field,
     name_field,
+    publisher_field,
     region_field,
 } from "../../data/columnsFieldSetting";
 import { useFlash } from "../../contexts/FlashProvider";
@@ -71,7 +73,7 @@ const Running = () => {
         const response = await api.get(`/missions/galaxy/${mission.galaxy}`);
         if (response.ok) {
             const rv = await response.body;
-            console.log(rv);
+            // console.log(rv);
             let result = {};
             rv.data.some((entry) => {
                 // console.log(entry);
@@ -192,6 +194,7 @@ const Running = () => {
                         mission_checked.expired = ret.expired;
                         mission_checked.bounty = ret.bounty;
                         mission_checked.info = ret;
+                        mission_checked.publisher = ret.publisher.owner.username
                     } else {
                         ret.error != undefined
                             ? (mission_checked.error = ret.error)
@@ -210,7 +213,7 @@ const Running = () => {
 
     const handleAll = async () => {
         // console.log(await missions)
-        console.log(missions)
+        // console.log(missions)
         let missions_deepcopy = JSON.parse(JSON.stringify(missions));
 
         let accept_dc = missions_deepcopy.filter(
@@ -274,15 +277,17 @@ const Running = () => {
         // account_name_field,
         // accid_field,
         // account_status_field,
+        publisher_field,
         galaxy_field,
         region_field,
+        bounty_field,
         created_field,
         expired_field,
         mission_status_field,
     ];
 
     const rejCol = [
-        id_field,
+        // id_field,
         name_field,
         // account_name_field,
         // accid_field,

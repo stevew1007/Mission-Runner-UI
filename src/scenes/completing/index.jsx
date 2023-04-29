@@ -4,6 +4,7 @@ import { useGlobal } from "../../contexts/GlobalProvider";
 import MissionMatcher from "../../components/MissionMatcher";
 import moment from "moment";
 import {
+    bounty_field,
     created_field,
     error_field,
     expired_field,
@@ -11,6 +12,7 @@ import {
     id_field,
     mission_status_field,
     name_field,
+    publisher_field,
     region_field,
 } from "../../data/columnsFieldSetting";
 import { useFlash } from "../../contexts/FlashProvider";
@@ -171,6 +173,7 @@ const Completeing = () => {
                         mission_checked.expired = ret.expired;
                         mission_checked.bounty = ret.bounty;
                         mission_checked.info = ret;
+                        mission_checked.publisher = ret.publisher.owner.username
                     } else {
                         ret.error != undefined
                             ? (mission_checked.error = ret.error)
@@ -205,7 +208,7 @@ const Completeing = () => {
                 accept_dc.map(async (mission) => {
                     // console.log(`处理任务:${index}`);
                     // console.log(mission.account_id)
-                    console.log(mission)
+                    // console.log(mission)
                     // console.log(msg);
                     const ret = await updateMission(
                         mission.mission_id,
@@ -252,8 +255,10 @@ const Completeing = () => {
         // account_name_field,
         // accid_field,
         // account_status_field,
+        publisher_field,
         galaxy_field,
         region_field,
+        bounty_field,
         created_field,
         expired_field,
         mission_status_field,

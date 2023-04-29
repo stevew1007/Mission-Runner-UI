@@ -11,12 +11,13 @@ import {
     expired_field,
     galaxy_field,
     id_field,
+    region_field,
     title_field,
 } from "../../data/columnsFieldSetting";
 import { useFlash } from "../../contexts/FlashProvider";
 // import FlashMessage from "../../components/FlashMessage";
 
-const Paying = () => {
+const Confirming = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const { user, toggleUpdateUser } = useUser();
@@ -93,27 +94,27 @@ const Paying = () => {
 
     const handleAll = async () => {
         // console.log(await missions)
-        console.log(missions)
+        // console.log(missions)
         let missions_deepcopy = JSON.parse(JSON.stringify(missions));
         let success_count = 0;
         let failure_count = 0;
         // console.log(accept_dc)
         if (missions.length === 0) {
-            flash("没有可以标记结清的任务", "info", 10);
+            flash("没有可以标记收讫的任务", "info", 10);
         } else {
             await Promise.all(
                 missions.map(async (mission) => {
                     // console.log(`处理任务:${index}`);
                     // console.log(mission.account_id)
-                    console.log(mission)
+                    // console.log(mission)
                     // console.log(msg);
                     const ret = await updateMission(
                         mission.id,
-                        "paid"
+                        "done"
                     );
                     // const ret
                     // console.log(`接受完成:${index}`);
-                    // console.log(ret);
+                    console.log(ret);
                     if (ret.error != undefined) {
                         mission.mission_status = "error";
                         mission.error = ret.error;
@@ -135,12 +136,12 @@ const Paying = () => {
             toggleUpdateUser();
             if (failure_count > 0) {
                 flash(
-                    `成功结清${success_count}个任务，失败${failure_count}个。请检查输入`,
+                    `成功收讫${success_count}个任务，失败${failure_count}个。请检查输入`,
                     "error",
                     10
                 );
             } else {
-                flash(`成功结清${success_count}个任务`, "success", 10);
+                flash(`成功收讫${success_count}个任务`, "success", 10);
             }
         }
         // setMissions(missions_deepcopy);
@@ -148,11 +149,15 @@ const Paying = () => {
 
     useEffect(() => {
         (async () => {
-            const response = await api.get("/missions/state/completed");
+            const response = await api.get("/missions/runned");
             if (response.ok) {
                 const results = await response.body;
-                console.log(results.data);
-                setMissions(results.data);
+                // console.log(results.data);
+                let paid_mission = results.data.filter(
+                    (mission) => mission.status == "paid"
+                );
+                // console.log('paid_mission::: ', paid_mission);
+                setMissions(paid_mission);
             } else {
                 setMissions(null);
             }
@@ -165,13 +170,13 @@ const Paying = () => {
         title_field,
         {
             field: "publisher",
-            headerName: "发布账号",
+            headerName: "发布者",
             headerAlign: "center",
             align: "center",
             flex: 1,
             renderCell: ({ row: { publisher } }) => {
                 // console.log(mission_id);
-                return <Box>{publisher.name}</Box>;
+                return <Box>{publisher.owner.username}</Box>;
             },
         },
         {
@@ -190,7 +195,7 @@ const Paying = () => {
         expired_field,
         {
             field: "bounty",
-            headerName: "奖金",
+            headerName: "打手费",
             headerAlign: "center",
             align: "right",
             type: "number",
@@ -294,7 +299,7 @@ const Paying = () => {
         },
         {
             field: "payable",
-            headerName: "应付金额",
+            headerName: "应收金额",
             headerAlign: "center",
             align: "right",
             flex: 1,
@@ -306,48 +311,37 @@ const Paying = () => {
                 }).format(value);
             }
         },
-        {
-            field: "link",
-            headerName: "",
-            headerAlign: "center",
-            align: "center",
-            flex: 1,
-            renderCell: ({ row: { default_account } }) => {
-                return (
-                    <Button
-                        color="success"
-                        variant="outlined"
-                        sx={{ml: 1, mr: 1}}
-                        onClick={async () => {await navigator.clipboard.writeText(
-                            `<font size="14" color="#ffd98d00"><a href="showinfo:1383//${default_account.esi_id}">${default_account.name}</a></font>`
-                        )}}      
-                    >
-                        游戏内链接
-                    </Button>
-                )
-            }
-        }
+        // {
+        //     field: "link",
+        //     headerName: "",
+        //     headerAlign: "center",
+        //     align: "center",
+        //     flex: 1,
+        //     renderCell: ({ row: { default_account } }) => {
+        //         return (
+        //             <Button
+        //                 color="success"
+        //                 variant="outlined"
+        //                 sx={{ml: 1, mr: 1}}
+        //                 onClick={async () => {await navigator.clipboard.writeText(
+        //                     `<font size="14" color="#ffd98d00"><a href="showinfo:1383//${default_account.esi_id}">${default_account.name}</a></font>`
+        //                 )}}      
+        //             >
+        //                 游戏内链接
+        //             </Button>
+        //         )
+        //     }
+        // }
     ];
 
 
     return (
         <Body
             topbar={true}
-            title="费用结算"
-            subtitle="快结账 老板们，文件夹就要满了"
+            title="账目收讫"
+            subtitle="谁还没结账啊"
         >
-            <Typography variant="h7">已经标记完成的任务：</Typography>
-            {/* <Typography variant="body2" sx={{ mt: "2px", mb: 2 }}> */}
-            {/* {accounts === null ?  : ""} */}
-
-            {/* {(accounts === undefined || accounts.length == 0) &&
-                    "没有显示账号？"}
-                <Typography variant="h7">
-                    <Link variant="subtitle2" to="/register_account">
-                        注册新账号
-                    </Link>
-                </Typography> */}
-            {/* </Typography> */}
+            <Typography variant="h7">已经标记结清的任务：</Typography>
             <Box
                 // m="10px 0 0 0"
                 // height="50vh"
@@ -441,14 +435,14 @@ const Paying = () => {
                             onClick={handleAll}
                             // color="primrary"
                         >
-                            结清所有
+                            确认结清
                         </Button>
                     </Box>
                 </Box>
                 {payment!=undefined && <DataGrid
                     autoHeight
                     checkboxSelection
-                    sx={{ width: '50%'}}
+                    sx={{ width: '35%'}}
                     rows={payment === undefined ? [] : payment}
                     loading={missions === undefined}
                     columns={payment_col}
@@ -458,4 +452,4 @@ const Paying = () => {
     );
 };
 
-export default Paying;
+export default Confirming;

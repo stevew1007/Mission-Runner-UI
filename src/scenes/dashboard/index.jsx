@@ -1,14 +1,30 @@
-import { Typography } from "@mui/material"
-import Body from "../../components/Body"
+import Body from "../../components/Body";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from 'remark-gfm'
+// import { Box, Divider, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+// import content from
+import content from "../../assets/intro.md";
 
 const Dashboard = () => {
-    return(
-        <Body topbar={true} title="统计数据" subtitle="你们打燃烧的怎么这么穷">
-            <Typography>
-                Hello World
-            </Typography>
-        </Body>
-    )
-}
+    const [md, setMD] = useState("");
 
-export default Dashboard
+    useEffect(() => {
+        fetch(content)
+            .then((response) => response.text())
+            .then((text) => setMD(text));
+    },[]);
+    // console.log(md)
+    return (
+        <Body
+            topbar={true}
+            title="使用说明"
+            subtitle="麻烦先把说明看了再开始刷"
+        >
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{md}</ReactMarkdown>
+          
+        </Body>
+    );
+};
+
+export default Dashboard;

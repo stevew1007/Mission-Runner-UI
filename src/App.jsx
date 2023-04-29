@@ -21,6 +21,8 @@ import AdminSetRole from "./scenes/admin_setrole";
 import AdminActivateAccount from "./scenes/admin_activateaccount";
 import AdminAudit from "./scenes/admin_audit";
 import Paying from "./scenes/paying";
+import Confirming from "./scenes/confirming";
+import RunnerRoute from "./components/RunnerRoute";
 
 function App() {
     const { mode } = useGlobal();
@@ -49,7 +51,10 @@ function App() {
                                 </PublicRoute>
                             }
                         />
-                        <Route path="/" element={<Navigate to='/dashboard' />} />
+                        <Route
+                            path="/"
+                            element={<Navigate to="/inprogress" />}
+                        />
                         <Route
                             path="*"
                             element={
@@ -58,28 +63,31 @@ function App() {
                                         <Route
                                             path="/admin/set_role"
                                             element={
-                                            <AdminRoute>
-                                                <AdminSetRole />
-                                            </AdminRoute>}
+                                                <AdminRoute>
+                                                    <AdminSetRole />
+                                                </AdminRoute>
+                                            }
                                         />
                                         <Route
                                             path="/admin/activate"
                                             element={
-                                            <AdminRoute>
-                                                <AdminActivateAccount />
-                                            </AdminRoute>}
+                                                <AdminRoute>
+                                                    <AdminActivateAccount />
+                                                </AdminRoute>
+                                            }
                                         />
                                         <Route
                                             path="/admin/audit"
                                             element={
-                                            <AdminRoute>
-                                                <AdminAudit />
-                                            </AdminRoute>}
+                                                <AdminRoute>
+                                                    <AdminAudit />
+                                                </AdminRoute>
+                                            }
                                         />
                                         <Route
                                             path="/"
                                             element={
-                                                <Navigate to="/dashboard" />
+                                                <Navigate to="/inprogress" />
                                             }
                                         />
                                         <Route
@@ -92,11 +100,15 @@ function App() {
                                         />
                                         <Route
                                             path="/paying"
-                                            element={<Paying />} 
+                                            element={<Paying />}
                                         />
                                         <Route
                                             path="/running"
-                                            element={<Running />}
+                                            element={
+                                                <RunnerRoute>
+                                                    <Running />
+                                                </RunnerRoute>
+                                            }
                                         />
                                         <Route
                                             path="/inprogress"
@@ -104,12 +116,25 @@ function App() {
                                         />
                                         <Route
                                             path="/completing"
-                                            element={<Completeing />}
+                                            element={
+                                                <RunnerRoute>
+                                                    <Completeing />
+                                                </RunnerRoute>
+                                            }
+                                        />
+                                        <Route
+                                            path="/confirming"
+                                            element={
+                                                <RunnerRoute>
+                                                    <Confirming />
+                                                </RunnerRoute>
+                                            }
                                         />
                                         <Route
                                             path="/account"
                                             element={<Account />}
                                         />
+
                                         <Route
                                             path="/register_account"
                                             element={<RegisterAccountPage />}

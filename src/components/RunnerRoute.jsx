@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useFlash } from "../contexts/FlashProvider";
 import { Navigate } from "react-router-dom";
 
-export default function AdminRoute({ children }) {
+export default function RunnerRoute({ children }) {
     const { user } = useUser();
     const flash = useFlash();
 
@@ -18,6 +18,6 @@ export default function AdminRoute({ children }) {
     }
 }
 
-AdminRoute.propTypes = {
+RunnerRoute.propTypes = {
     children: PropTypes.any
 }

@@ -228,7 +228,7 @@ const Topbar = ({ children }) => {
                     </Typography>
                     <List sx={{ ml: 2 }}>
                         <ListItemButton component={NavLink} to="/dashboard">
-                            统计数据
+                            使用说明
                         </ListItemButton>
                         <ListItemButton component={NavLink} to="/inprogress">
                             进行中
@@ -270,7 +270,12 @@ const Topbar = ({ children }) => {
                                     </ListItemButton>
                                 </ListItem>
                                 <ListItem disablePadding>
-                                    <ListItemButton>账目收讫</ListItemButton>
+                                    <ListItemButton
+                                        component={NavLink}
+                                        to="/confirming"
+                                    >
+                                        账目收讫
+                                    </ListItemButton>
                                 </ListItem>
                             </List>
                         </Box>
