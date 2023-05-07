@@ -1,10 +1,4 @@
-import {
-    Box,
-    Chip,
-    Tooltip,
-    Typography,
-    useTheme,
-} from "@mui/material";
+import { Box, Chip, Tooltip, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import Body from "../../components/Body";
@@ -14,27 +8,64 @@ import moment from "moment";
 import { useUser } from "../../contexts/UserProvider";
 import { useFlash } from "../../contexts/FlashProvider";
 
-
 const AdminActivateAccount = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const { user, toggleUpdateUser } = useUser();
     const { api } = useGlobal();
     const [accounts, setAccounts] = useState();
+    const [paginationModel, setPaginationModel] = useState({
+        limit: undefined,
+        offset: undefined,
+        count: undefined,
+        total: undefined,
+    });
+    const [paginationCtrl, setPaginationCtrl] = useState({
+        page: 0,
+        pageSize: 50,
+    });
     const flash = useFlash();
+
+    const handlePaginationUpdate = async (params) => {
+        // console.log(params);
+        // const response = getAccountInfo(params.pageSize, params.page * params.pageSize);
+        const response = await api.get("/admin/accounts", {
+            limit: params.pageSize,
+            offset: params.page * params.pageSize,
+        });
+        if (response.ok) {
+            const results = await response.body;
+            setAccounts(results.data);
+            // setPaginationModel(results.pagination);
+            {
+                paginationModel != results.pagination &&
+                    setPaginationModel(results.pagination);
+            }
+            setPaginationCtrl({
+                page: params.page,
+                pageSize: params.pageSize,
+            });
+        } else {
+            flash(`更新分页失败 HTTP ${response.status}`, "error", 10);
+        }
+    };
 
     useEffect(() => {
         (async () => {
-            const response = await api.get("/admin/accounts");
+            const response = await api.get("/admin/accounts", {
+                limit: paginationCtrl.pageSize,
+                offset: paginationCtrl.page * paginationCtrl.pageSize,
+            });
             if (response.ok) {
                 const results = await response.body;
                 setAccounts(results.data);
+                setPaginationModel(results.pagination);
                 // console.log(results.data);
             } else {
                 setAccounts(null);
             }
         })();
-    }, [api, user]);
+    }, [api, user, paginationCtrl, setPaginationCtrl]);
 
     const columns = [
         {
@@ -147,7 +178,11 @@ const AdminActivateAccount = () => {
     ];
 
     return (
-        <Body topbar={true} title="激活管理" subtitle="哪个敢惹我，我就让他打不成燃烧">
+        <Body
+            topbar={true}
+            title="激活管理"
+            subtitle="哪个敢惹我，我就让他打不成燃烧"
+        >
             <Box
                 // m="10px 0 0 0"
                 // height="50vh"
@@ -181,8 +216,21 @@ const AdminActivateAccount = () => {
             >
                 <DataGrid
                     autoHeight
-                    rows={accounts === undefined ? [] : accounts}
+                    rows={
+                        accounts === undefined || accounts === null
+                            ? []
+                            : accounts
+                    }
                     loading={accounts === undefined}
+                    paginationMode="server"
+                    paginationModel={paginationCtrl}
+                    pageSizeOptions={[10, 25, 50, 100]}
+                    onPaginationModelChange={handlePaginationUpdate}
+                    rowCount={
+                        paginationModel.total === undefined
+                            ? 0
+                            : paginationModel.total
+                    }
                     columns={columns}
                 />
             </Box>

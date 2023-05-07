@@ -97,20 +97,6 @@ const Topbar = ({ children }) => {
 
                     {/* Icons */}
                     <Box display="flex">
-                        <Box
-                            display="flex"
-                            backgroundColor={colors.primary[400]}
-                            borderRadius="3px"
-                            marginRight={2}
-                        >
-                            <InputBase
-                                sx={{ ml: 2, flex: 1 }}
-                                placeholder="Search"
-                            />
-                            <IconButton type="button" sx={{ p: 1 }}>
-                                <SearchIcon />
-                            </IconButton>
-                        </Box>
                         <IconButton onClick={() => toggleMode()}>
                             {theme.palette.mode === "dark" ? (
                                 <DarkModeOutlinedIcon />
@@ -119,13 +105,10 @@ const Topbar = ({ children }) => {
                             )}
                         </IconButton>
                         <Box>
-                            <IconButton>
-                                <NotificationsOutlinedIcon />
-                            </IconButton>
                             <IconButton
                                 onClick={handleClick}
                                 size="small"
-                                // sx={{ ml: 2 }}
+                                sx={{ ml: 2 }}
                                 aria-controls={
                                     open ? "account-menu" : undefined
                                 }

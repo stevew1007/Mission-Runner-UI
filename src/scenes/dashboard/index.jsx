@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from 'remark-gfm'
 // import { Box, Divider, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-// import content from
+import rehypeRaw from 'rehype-raw'
 import content from "../../assets/intro.md";
 
 const Dashboard = () => {
@@ -21,7 +21,12 @@ const Dashboard = () => {
             title="使用说明"
             subtitle="麻烦先把说明看了再开始刷"
         >
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{md}</ReactMarkdown>
+            <ReactMarkdown 
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeRaw]}
+            >
+                {md}
+            </ReactMarkdown>
           
         </Body>
     );
