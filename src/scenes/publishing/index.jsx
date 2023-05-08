@@ -70,7 +70,7 @@ const Publishing = () => {
     const flash = useFlash();
     const [missions, setMissions] = useState();
     const [bounty, setBounty] = useState({
-        value: 15000000,
+        value: 13000000,
         error: false,
         helperText: " ",
         showRej: false,
