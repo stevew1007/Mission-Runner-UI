@@ -81,6 +81,17 @@ const AdminSetRole = () => {
     };
     // console.log(users)
 
+    const [paginationModel, setPaginationModel] = useState({
+        limit: undefined,
+        offset: undefined,
+        count: undefined,
+        total: undefined,
+    });
+    const [paginationCtrl, setPaginationCtrl] = useState({
+        page: 0,
+        pageSize: 50,
+    });
+
     const TranslateRole = (role) => {
         switch (role) {
             case "mission_publisher":
@@ -106,17 +117,45 @@ const AdminSetRole = () => {
         }
     };
 
+    const handlePaginationUpdate = async (params) => {
+        // console.log(params);
+        // const response = getAccountInfo(params.pageSize, params.page * params.pageSize);
+        const response = await api.get("/admin/users", {
+            limit: params.pageSize,
+            offset: params.page * params.pageSize,
+        });
+        if (response.ok) {
+            const results = await response.body;
+            setUsers(results.data);
+            // setPaginationModel(results.pagination);
+            {
+                paginationModel != results.pagination &&
+                    setPaginationModel(results.pagination);
+            }
+            setPaginationCtrl({
+                page: params.page,
+                pageSize: params.pageSize,
+            });
+        } else {
+            flash(`更新分页失败 HTTP ${response.status}`, "error", 10);
+        }
+    };
+
     useEffect(() => {
         (async () => {
-            const response = await api.get("/admin/users");
+            const response = await api.get("/admin/users", {
+                limit: paginationCtrl.pageSize,
+                offset: paginationCtrl.page * paginationCtrl.pageSize,
+            });
             if (response.ok) {
                 const results = await response.body;
                 setUsers(results.data);
+                setPaginationModel(results.pagination);
             } else {
                 setUsers(null);
             }
         })();
-    }, [api, user]);
+    }, [api, user, paginationCtrl, setPaginationCtrl]);
 
     const columns = [
         {
@@ -295,6 +334,15 @@ const AdminSetRole = () => {
                     rows={users === undefined ? [] : users}
                     loading={users === undefined}
                     columns={columns}
+                    paginationMode="server"
+                    paginationModel={paginationCtrl}
+                    pageSizeOptions={[10, 25, 50, 100]}
+                    onPaginationModelChange={handlePaginationUpdate}
+                    rowCount={
+                        paginationModel.total === undefined
+                            ? 0
+                            : paginationModel.total
+                    }
                 />
             </Box>
         </Body>

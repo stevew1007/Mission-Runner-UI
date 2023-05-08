@@ -1,4 +1,5 @@
 const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
+import { encode } from 'js-base64';
 
 export default class ApiClient {
   constructor() {
@@ -83,7 +84,7 @@ export default class ApiClient {
   async login(username, password) {
     const response = await this.post('/tokens', null, {
       headers: {
-        Authorization:  'Basic ' + btoa(username + ":" + password) 
+        Authorization:  'Basic ' + encode(username + ":" + password) 
       }
     });
     if (!response.ok) {

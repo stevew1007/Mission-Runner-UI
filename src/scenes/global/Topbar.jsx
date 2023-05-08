@@ -17,22 +17,20 @@ import {
     MenuItem,
 } from "@mui/material";
 import { tokens } from "../../theme";
-import InputBase from "@mui/material/InputBase";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-// import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
-import SearchIcon from "@mui/icons-material/Search";
 import { NavLink } from "react-router-dom";
 import { useGlobal } from "../../contexts/GlobalProvider";
 import { useUser } from "../../contexts/UserProvider";
 import PropTypes from "prop-types";
 import { useState } from "react";
+// import { exec } from 'child_process';
 
 const drawerWidth = 240;
+const version = import.meta.env.PACKAGE_VERSION
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
     ({ theme, open }) => ({
@@ -66,6 +64,7 @@ const Topbar = ({ children }) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+    
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -139,6 +138,7 @@ const Topbar = ({ children }) => {
                                         overflow: "visible",
                                         filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
                                         mt: 1.5,
+                                        alignItems: "center",
                                         "& .MuiAvatar-root": {
                                             width: 32,
                                             height: 32,
@@ -169,21 +169,31 @@ const Topbar = ({ children }) => {
                                     vertical: "bottom",
                                 }}
                             >
-                                <MenuItem component={NavLink} to="/account">
+                                <MenuItem sx={{ml:1, mr:1}}>
+                                    你好，{user.username}!
+                                </MenuItem>
+                                <Divider />
+                                <MenuItem component={NavLink} to="/account"sx={{ml:1}}>
                                     <AccountCircleOutlinedIcon />
                                     <Typography ml={1}>账号管理</Typography>
                                 </MenuItem>
                                 <MenuItem
                                     component={NavLink}
                                     to="/register_account"
+                                    sx={{ml:1}}
                                 >
                                     <PersonAddOutlinedIcon />
                                     <Typography ml={1}>登记账号</Typography>
                                 </MenuItem>
-                                <MenuItem onClick={logout}>
+                                <MenuItem onClick={logout} sx={{ml:1}}>
                                     <LogoutOutlinedIcon />
                                     <Typography ml={1}>登出</Typography>
                                 </MenuItem>
+                                <Divider />
+                                <MenuItem sx={{ml:1, height:2}}>
+                                    <Typography fontSize={1}>应用版本 v{version}</Typography>
+                                </MenuItem>
+                                
                             </Menu>
                         </Box>
                     </Box>
