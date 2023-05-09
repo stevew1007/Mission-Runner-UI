@@ -28,6 +28,9 @@ const missionSchema = yup.object().shape({
                 /^(萨沙|天使|天蛇|古斯塔斯|血袭者)?混乱地点\*? \( 跃迁门\*? \)$/,
                 /^(Warp Gate)\*?/,
                 /^(跃迁门)\*?$/,
+                /^(跃迁门1)\*?$/,
+                /^(跃迁门2)\*?$/,
+                /^(跃迁门3)\*?$/,
             ];
             return expression.some((e) => e.test(value));
         })
@@ -76,8 +79,9 @@ const Completeing = () => {
                 // console.log(entry);
                 // console.log(mission);
                 const check = [
-                    mission.title === entry.name,
+                    mission.name === entry.title,
                     mission.galaxy === entry.galaxy,
+                    mission.account_name === entry.publisher.name,
                     moment(mission.created).utc().format() === entry.created,
                 ];
                 // console.log(check.every((e) => e))
@@ -133,9 +137,8 @@ const Completeing = () => {
             return withStatus;
         } catch (error) {
             // console.log(error);
-            const validationError = error.inner
-                .map((e) => e.message)
-                // .concat(error.message);
+            const validationError = error.inner.map((e) => e.message);
+            // .concat(error.message);
             const withError = { ...mission, error: validationError };
             return withError;
         }
@@ -173,7 +176,8 @@ const Completeing = () => {
                         mission_checked.expired = ret.expired;
                         mission_checked.bounty = ret.bounty;
                         mission_checked.info = ret;
-                        mission_checked.publisher = ret.publisher.owner.username
+                        mission_checked.publisher =
+                            ret.publisher.owner.username;
                     } else {
                         ret.error != undefined
                             ? (mission_checked.error = ret.error)
@@ -195,8 +199,7 @@ const Completeing = () => {
         let missions_deepcopy = JSON.parse(JSON.stringify(missions));
 
         let accept_dc = missions_deepcopy.filter(
-            (mission) =>
-                !mission.error && mission.mission_status === "accepted"
+            (mission) => !mission.error && mission.mission_status === "accepted"
         );
         let success_count = 0;
         let failure_count = 0;
@@ -278,11 +281,14 @@ const Completeing = () => {
         error_field,
     ];
 
-
     return (
-        <Body topbar={true} title="确认完成" subtitle="在等宝贝打手打完再来一波">
-            <MissionMatcher 
-                keyword="完成" 
+        <Body
+            topbar={true}
+            title="确认完成"
+            subtitle="在等宝贝打手打完再来一波"
+        >
+            <MissionMatcher
+                keyword="完成"
                 columns={columns}
                 rejCol={rejCol}
                 handleParsing={handleParsing}

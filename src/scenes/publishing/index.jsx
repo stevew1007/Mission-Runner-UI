@@ -31,6 +31,9 @@ const missionSchema = yup.object().shape({
                 /^(萨沙|天使|天蛇|古斯塔斯|血袭者)?混乱地点\*? \( 跃迁门\*? \)$/,
                 /^(Warp Gate)\*?/,
                 /^(跃迁门)\*?$/,
+                /^(跃迁门1)\*?$/,
+                /^(跃迁门2)\*?$/,
+                /^(跃迁门3)\*?$/,
             ];
             return expression.some((e) => e.test(value));
         })
@@ -262,7 +265,8 @@ const Publishing = () => {
                         title: mission.name,
                         galaxy: mission.galaxy,
                         created: moment.utc(mission.created).format(),
-                        expired: moment.utc(mission.created)
+                        expired: moment
+                            .utc(mission.created)
                             .add(7, "days")
                             .format(),
                         bounty: bounty.value,

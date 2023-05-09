@@ -29,6 +29,9 @@ const missionSchema = yup.object().shape({
                 /^(萨沙|天使|天蛇|古斯塔斯|血袭者)?混乱地点\*? \( 跃迁门\*? \)$/,
                 /^(Warp Gate)\*?/,
                 /^(跃迁门)\*?$/,
+                /^(跃迁门1)\*?$/,
+                /^(跃迁门2)\*?$/,
+                /^(跃迁门3)\*?$/,
             ];
             return expression.some((e) => e.test(value));
         })
@@ -76,11 +79,14 @@ const Running = () => {
             // console.log(rv);
             let result = {};
             rv.data.some((entry) => {
-                // console.log(entry);
-                // console.log(mission);
+                console.log(entry);
+                // console.log(mission.name);
+                console.log(mission);
+                // console.log(entry.title);
                 const check = [
-                    mission.title === entry.name,
+                    mission.name === entry.title,
                     mission.galaxy === entry.galaxy,
+                    mission.account_name === entry.publisher.name,
                     moment(mission.created).utc().format() === entry.created,
                 ];
                 // console.log(check.every((e) => e))
@@ -149,9 +155,8 @@ const Running = () => {
             return withStatus;
         } catch (error) {
             // console.log(error);
-            const validationError = error.inner
-                .map((e) => e.message)
-                // .concat(error.message);
+            const validationError = error.inner.map((e) => e.message);
+            // .concat(error.message);
             const withError = { ...mission, error: validationError };
             return withError;
         }
@@ -160,8 +165,8 @@ const Running = () => {
     const handleParsing = async (entryValue) => {
         // console.log(user)
         if (user.default_account_id === null) {
-            flash("未设置付款账号, 请在右上角登记并设置", "error", 200 )
-            return false
+            flash("未设置付款账号, 请在右上角登记并设置", "error", 200);
+            return false;
         }
         const jsonfy = JSON.stringify(entryValue).replace(/^"(.*)"$/, "$1");
         const lst_str = jsonfy.split("\\n");
@@ -194,7 +199,8 @@ const Running = () => {
                         mission_checked.expired = ret.expired;
                         mission_checked.bounty = ret.bounty;
                         mission_checked.info = ret;
-                        mission_checked.publisher = ret.publisher.owner.username
+                        mission_checked.publisher =
+                            ret.publisher.owner.username;
                     } else {
                         ret.error != undefined
                             ? (mission_checked.error = ret.error)

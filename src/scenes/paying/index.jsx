@@ -95,7 +95,7 @@ const Paying = () => {
         // console.log(await missions)
         if (payment === undefined) {
             flash("请先点击结算", "error", 10);
-            return
+            return;
         }
         // console.log(missions)
         let missions_deepcopy = JSON.parse(JSON.stringify(missions));
@@ -109,12 +109,9 @@ const Paying = () => {
                 missions.map(async (mission) => {
                     // console.log(`处理任务:${index}`);
                     // console.log(mission.account_id)
-                    console.log(mission)
+                    console.log(mission);
                     // console.log(msg);
-                    const ret = await updateMission(
-                        mission.id,
-                        "paid"
-                    );
+                    const ret = await updateMission(mission.id, "paid");
                     // const ret
                     // console.log(`接受完成:${index}`);
                     // console.log(ret);
@@ -308,7 +305,7 @@ const Paying = () => {
                     style: "currency",
                     currency: "ISK",
                 }).format(value);
-            }
+            },
         },
         {
             field: "link",
@@ -321,18 +318,19 @@ const Paying = () => {
                     <Button
                         color="success"
                         variant="outlined"
-                        sx={{ml: 1, mr: 1}}
-                        onClick={async () => {await navigator.clipboard.writeText(
-                            `<font size="14" color="#ffd98d00"><a href="showinfo:1383//${default_account.esi_id}">${default_account.name}</a></font>`
-                        )}}      
+                        sx={{ ml: 1, mr: 1 }}
+                        onClick={async () => {
+                            await navigator.clipboard.writeText(
+                                `<font size="14" color="#ffd98d00"><a href="showinfo:1383//${default_account.esi_id}">${default_account.name}</a></font>`
+                            );
+                        }}
                     >
                         游戏内链接
                     </Button>
-                )
-            }
-        }
+                );
+            },
+        },
     ];
-
 
     return (
         <Body
@@ -449,14 +447,16 @@ const Paying = () => {
                         </Button>
                     </Box>
                 </Box>
-                {payment!=undefined && <DataGrid
-                    autoHeight
-                    checkboxSelection
-                    sx={{ width: '50%'}}
-                    rows={payment === undefined ? [] : payment}
-                    loading={missions === undefined}
-                    columns={payment_col}
-                />}
+                {payment != undefined && (
+                    <DataGrid
+                        autoHeight
+                        checkboxSelection
+                        sx={{ width: "50%" }}
+                        rows={payment === undefined ? [] : payment}
+                        loading={missions === undefined}
+                        columns={payment_col}
+                    />
+                )}
             </Box>
         </Body>
     );
