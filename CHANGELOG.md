@@ -1,3 +1,16 @@
+## [1.7.4](https://github.com/stevew1007/Mission-Runner-UI/compare/v1.7.3...v1.7.4) (2023-05-09)
+
+
+### Bug Fixes
+
+* **matching:** fix mission matching logic ([d60eba0](https://github.com/stevew1007/Mission-Runner-UI/commit/d60eba006822feb8c056d0acb67654a3610d61a0))
+* **publishing:** fix the input timestamp to be parsed as UTC ([1109757](https://github.com/stevew1007/Mission-Runner-UI/commit/1109757c1d98689fa7b6e55557efac4b70ec9354))
+
+
+### Reverts
+
+* revert package-lock.json to fix github action ([c24c6e0](https://github.com/stevew1007/Mission-Runner-UI/commit/c24c6e053f10f491efbd2b11f6c95a13b712cbe6))
+
 ## [1.7.3](https://github.com/stevew1007/Mission-Runner-UI/compare/v1.7.2...v1.7.3) (2023-05-09)
 
 
