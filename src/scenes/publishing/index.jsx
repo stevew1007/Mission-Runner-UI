@@ -65,7 +65,6 @@ const missionSchema = yup.object().shape({
 });
 
 const Publishing = () => {
-
     const { api } = useGlobal();
     const flash = useFlash();
     const [missions, setMissions] = useState();
@@ -108,11 +107,11 @@ const Publishing = () => {
                         "Mission already published"
                     ) {
                         message = "请勿重复发送";
-                    } else if (response.body.description ===
-                        "Expired time is invalid"){
+                    } else if (
+                        response.body.description === "Expired time is invalid"
+                    ) {
                         message = "过期时间错误";
-                    } else
-                    {
+                    } else {
                         message = "任务格式错误";
                     }
                     break;
@@ -143,14 +142,14 @@ const Publishing = () => {
             results.data.some((entry) => {
                 // console.log(entry);
                 // console.log(mission);
+
                 const check = [
                     mission.title === entry.name,
                     mission.galaxy === entry.galaxy,
-                    moment(mission.created).utc().format() === entry.created,
+                    moment.utc(mission.created).format() === entry.created,
                 ];
                 // console.log(check.every((e) => e))
                 if (check.every((e) => e)) {
-                    // console.log({ match: true, ...entry });
                     result = { match: true, ...entry };
                     return true;
                 }
@@ -169,11 +168,10 @@ const Publishing = () => {
             return withStatus;
         } catch (error) {
             // console.log(error.inner)
-            console.log(missionSchema.isValidSync(mission))
-            const validationError = error.inner
-                .map((e) => e.message)
-                // .concat(error.message);
-            console.log(validationError)
+            console.log(missionSchema.isValidSync(mission));
+            const validationError = error.inner.map((e) => e.message);
+            // .concat(error.message);
+            console.log(validationError);
             const withError = { ...mission, error: validationError };
             return withError;
         }
@@ -263,10 +261,9 @@ const Publishing = () => {
                     let msg = {
                         title: mission.name,
                         galaxy: mission.galaxy,
-                        created: moment(mission.created).utc().format(),
-                        expired: moment(mission.created)
+                        created: moment.utc(mission.created).format(),
+                        expired: moment.utc(mission.created)
                             .add(7, "days")
-                            .utc()
                             .format(),
                         bounty: bounty.value,
                     };
@@ -305,31 +302,6 @@ const Publishing = () => {
     };
 
     const handleSelected = () => {};
-
-    // useEffect(() => {
-    //     // console.log(missions
-    //     (async () => {
-    //         if (missions === undefined) {
-    //             return [];
-    //         }
-    //         let mission_update = [...missions.accept];
-    //         mission_update.forEach(async (val) => {
-    //             if (val.account_status === undefined) {
-    //                 const accountInfo = await getAccountInfo(val.account_name);
-    //                 if (accountInfo.error) {
-    //                     val.account_status = "错误";
-    //                     val.error = "找不到账号名";
-    //                 } else {
-    //                     val.account_status = accountInfo.activated
-    //                         ? "已激活"
-    //                         : "未激活";
-    //                 }
-    //             }
-    //             return val;
-    //         });
-    //         setValidMission(mission_update);
-    //     })();
-    // }, [missions]);
 
     const columns = [
         id_field,

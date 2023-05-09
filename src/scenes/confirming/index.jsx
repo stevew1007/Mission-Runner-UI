@@ -87,7 +87,7 @@ const Confirming = () => {
                     runner_to_pay[runner_index].payable += mission.bounty;
                 }
             });
-            console.log(runner_to_pay);
+            // console.log(runner_to_pay);
             setPayment(runner_to_pay);
         }
     };
@@ -118,7 +118,7 @@ const Confirming = () => {
                     );
                     // const ret
                     // console.log(`接受完成:${index}`);
-                    console.log(ret);
+                    // console.log(ret);
                     if (ret.error != undefined) {
                         mission.mission_status = "error";
                         mission.error = ret.error;

@@ -114,7 +114,7 @@ export const created_field = {
     flex: 1,
     renderCell: ({ row: { created } }) => {
         // console.log(created)
-        return <Box>{moment(created).format("Y/M/D H:mm")}</Box>;
+        return <Box>{moment.utc(created).format("Y/M/D H:mm")}</Box>;
     },
 };
 
