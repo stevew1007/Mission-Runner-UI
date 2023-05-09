@@ -1,7 +1,7 @@
 {
   "name": "mission-runner-ui",
   "private": true,
-  "version": "1.7.0",
+  "version": "1.7.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -37,6 +37,8 @@
   },
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/npm": "^10.0.3",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^3.1.0",
@@ -65,8 +67,29 @@
     ],
     "plugins": [
       "@semantic-release/commit-analyzer",
-      "@semantic-release/changelog",
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogFile": "CHANGELOG.md"
+        }
+      ],
       "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false
+        }
+      ],
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "package.json",
+            "CHANGELOG.md"
+          ],
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ],
       "@semantic-release/github"
     ]
   }
