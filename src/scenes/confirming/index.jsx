@@ -95,6 +95,10 @@ const Confirming = () => {
     const handleAll = async () => {
         // console.log(await missions)
         // console.log(missions)
+	if (payment === undefined) {
+            flash("请先点击结算", "error", 10);
+            return
+        }
         let missions_deepcopy = JSON.parse(JSON.stringify(missions));
         let success_count = 0;
         let failure_count = 0;

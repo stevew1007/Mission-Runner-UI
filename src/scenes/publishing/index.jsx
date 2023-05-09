@@ -31,6 +31,9 @@ const missionSchema = yup.object().shape({
                 /^(萨沙|天使|天蛇|古斯塔斯|血袭者)?混乱地点\*? \( 跃迁门\*? \)$/,
                 /^(Warp Gate)\*?/,
                 /^(跃迁门)\*?$/,
+		/^(跃迁门1)\*?$/,
+                /^(跃迁门2)\*?$/,
+                /^(跃迁门3)\*?$/,
             ];
             return expression.some((e) => e.test(value));
         })
@@ -70,7 +73,7 @@ const Publishing = () => {
     const flash = useFlash();
     const [missions, setMissions] = useState();
     const [bounty, setBounty] = useState({
-        value: 15000000,
+        value: 13000000,
         error: false,
         helperText: " ",
         showRej: false,
