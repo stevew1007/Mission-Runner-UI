@@ -1,3 +1,10 @@
+## [1.7.5](https://github.com/stevew1007/Mission-Runner-UI/compare/v1.7.4...v1.7.5) (2023-05-09)
+
+
+### Bug Fixes
+
+* allow digit in the mission title ([60886ca](https://github.com/stevew1007/Mission-Runner-UI/commit/60886ca61097d83c3bf74c1c10535ec670c37261))
+
 ## [1.7.4](https://github.com/stevew1007/Mission-Runner-UI/compare/v1.7.3...v1.7.4) (2023-05-09)
 
 
