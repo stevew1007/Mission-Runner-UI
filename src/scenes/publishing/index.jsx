@@ -27,13 +27,10 @@ const missionSchema = yup.object().shape({
         .string()
         .test("checkformat", "任务名格式错误", (value) => {
             let expression = [
-                /^(Sansha|Angel|Serpentis|Guristas|Blood Raider) Anomic Site \( Warp Gate \)*?$/,
-                /^(萨沙|天使|天蛇|古斯塔斯|血袭者)?混乱地点\*? \( 跃迁门\*? \)$/,
-                /^(Warp Gate)\*?/,
-                /^(跃迁门)\*?$/,
-                /^(跃迁门1)\*?$/,
-                /^(跃迁门2)\*?$/,
-                /^(跃迁门3)\*?$/,
+                /^(Sansha|Angel|Serpentis|Guristas|Blood Raider) Anomic Site \( Warp Gate \)*?\d?$/,
+                /^(萨沙|天使|天蛇|古斯塔斯|血袭者)?混乱地点\*? \( 跃迁门\*? \)\d?$/,
+                /^(Warp Gate)\d?\*?\d?$/,
+                /^(跃迁门)\d?\*?\d?$/
             ];
             return expression.some((e) => e.test(value));
         })
@@ -149,7 +146,7 @@ const Publishing = () => {
                 const check = [
                     mission.title === entry.name,
                     mission.galaxy === entry.galaxy,
-                    moment.utc(mission.created).format() === entry.created,
+                    moment(mission.created).utc().format() === entry.created,
                 ];
                 // console.log(check.every((e) => e))
                 if (check.every((e) => e)) {
@@ -264,9 +261,9 @@ const Publishing = () => {
                     let msg = {
                         title: mission.name,
                         galaxy: mission.galaxy,
-                        created: moment.utc(mission.created).format(),
-                        expired: moment
-                            .utc(mission.created)
+                        created: moment(mission.created).utc().format(),
+                        expired: moment(mission.created)
+                            .utc()
                             .add(7, "days")
                             .format(),
                         bounty: bounty.value,
