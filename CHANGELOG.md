@@ -1,3 +1,10 @@
+## [1.7.3](https://github.com/stevew1007/Mission-Runner-UI/compare/v1.7.2...v1.7.3) (2023-05-09)
+
+
+### Bug Fixes
+
+* add gard to not operate when paying table is not displayed ([ea247c0](https://github.com/stevew1007/Mission-Runner-UI/commit/ea247c01e7c6403f320c5c2213dc9ed8692ffa3a))
+
 ## [1.7.2](https://github.com/stevew1007/Mission-Runner-UI/compare/v1.7.1...v1.7.2) (2023-05-08)
 
 
@@ -75,13 +82,3 @@
 * **account:** add account page ([226363e](https://github.com/stevew1007/Mission-Runner-UI/commit/226363e444822ea35945f74ed86dd4fbb5ff84f2))
 * add login/logout ([47098b1](https://github.com/stevew1007/Mission-Runner-UI/commit/47098b1bd09728a4bc7612927aa079f9ca182db8))
 * initial commit ([50b3366](https://github.com/stevew1007/Mission-Runner-UI/commit/50b3366bc3ff766a13379659b94d3160a9831f79))
-
-
-
-
-
-
-
-
-
-
