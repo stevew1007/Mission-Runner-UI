@@ -29,6 +29,9 @@ const missionSchema = yup.object().shape({
                 /^(萨沙|天使|天蛇|古斯塔斯|血袭者)?混乱地点\*? \( 跃迁门\*? \)$/,
                 /^(Warp Gate)\*?/,
                 /^(跃迁门)\*?$/,
+		/^(跃迁门1)\*?$/,
+                /^(跃迁门2)\*?$/,
+                /^(跃迁门3)\*?$/,
             ];
             return expression.some((e) => e.test(value));
         })
@@ -76,11 +79,14 @@ const Running = () => {
             // console.log(rv);
             let result = {};
             rv.data.some((entry) => {
-                // console.log(entry);
-                // console.log(mission);
+                 console.log(entry);
+                // console.log(mission.name);
+		 console.log(mission);
+		// console.log(entry.title);
                 const check = [
-                    mission.title === entry.name,
+                    mission.name === entry.title,
                     mission.galaxy === entry.galaxy,
+		    mission.account_name === entry.publisher.name,
                     moment(mission.created).utc().format() === entry.created,
                 ];
                 // console.log(check.every((e) => e))
