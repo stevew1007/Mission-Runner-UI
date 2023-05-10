@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "prepare": "husky install",
     "lint": "eslint .",
-    "lint:fix": "eslint ./src --fix",
+    "lint:fix": "eslint . --fix",
     "commit": "cz",
     "semantic-release": "semantic-release"
   },
