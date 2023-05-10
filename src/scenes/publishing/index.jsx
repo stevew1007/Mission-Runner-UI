@@ -146,7 +146,7 @@ const Publishing = () => {
                 const check = [
                     mission.title === entry.name,
                     mission.galaxy === entry.galaxy,
-                    moment(mission.created).utc().format() === entry.created,
+                    moment.utc(mission.created).format() === entry.created,
                 ];
                 // console.log(check.every((e) => e))
                 if (check.every((e) => e)) {
@@ -261,9 +261,9 @@ const Publishing = () => {
                     let msg = {
                         title: mission.name,
                         galaxy: mission.galaxy,
-                        created: moment(mission.created).utc().format(),
-                        expired: moment(mission.created)
-                            .utc()
+                        created: moment.utc(mission.created).format(),
+                        expired: moment
+                            .utc(mission.created)
                             .add(7, "days")
                             .format(),
                         bounty: bounty.value,

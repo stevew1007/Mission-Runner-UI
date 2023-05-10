@@ -87,7 +87,7 @@ const Running = () => {
                     mission.name === entry.title,
                     mission.galaxy === entry.galaxy,
                     mission.account_name === entry.publisher.name,
-                    moment(mission.created).utc().format() === entry.created,
+                    moment.utc(mission.created).format() === entry.created,
                 ];
                 // console.log(check.every((e) => e))
                 if (check.every((e) => e)) {
