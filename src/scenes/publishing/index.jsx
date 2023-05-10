@@ -106,7 +106,7 @@ const Publishing = () => {
                         response.body.description ===
                         "Mission already published"
                     ) {
-                        message = "请勿重复发送";
+                        message = "检测到重复位标";
                     } else if (
                         response.body.description === "Expired time is invalid"
                     ) {
@@ -247,12 +247,20 @@ const Publishing = () => {
             (mission) =>
                 !mission.error && mission.mission_status === "not_published"
         );
+        let duplicate_dc = missions_deepcopy.filter(
+            (mission) => 
+                mission.error == "检测到重复位标"
+        )
         let success_count = 0;
         let failure_count = 0;
         // console.log(accept_dc)
+
         if (accept_dc.length === 0) {
             flash("没有可以发布的任务", "info", 10);
         } else {
+            if (duplicate_dc.length > 0) {
+                flash("检测到重复的位标。请在坐标名后添加数字，然后重新解析。", "info")
+            } 
             await Promise.all(
                 accept_dc.map(async (mission) => {
                     // console.log(`处理任务:${index}`);
