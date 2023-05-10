@@ -1,3 +1,10 @@
+## [1.7.6](https://github.com/stevew1007/Mission-Runner-UI/compare/v1.7.5...v1.7.6) (2023-05-10)
+
+
+### Bug Fixes
+
+* fix mission matching logic to interprite read time as utc ([e81ba2a](https://github.com/stevew1007/Mission-Runner-UI/commit/e81ba2ac193a4843f95f24bb880a9f8c3a3f44b6))
+
 ## [1.7.5](https://github.com/stevew1007/Mission-Runner-UI/compare/v1.7.4...v1.7.5) (2023-05-09)
 
 
