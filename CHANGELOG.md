@@ -1,3 +1,10 @@
+## [1.7.8](https://github.com/stevew1007/Mission-Runner-UI/compare/v1.7.7...v1.7.8) (2023-05-10)
+
+
+### Bug Fixes
+
+* add prompt for duplicate mission ([b2a2dfc](https://github.com/stevew1007/Mission-Runner-UI/commit/b2a2dfcf53154ecd22cb7c5bc1bfc6dc2af31e0d))
+
 ## [1.7.7](https://github.com/stevew1007/Mission-Runner-UI/compare/v1.7.6...v1.7.7) (2023-05-10)
 
 
