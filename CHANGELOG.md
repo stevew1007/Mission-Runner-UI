@@ -1,3 +1,10 @@
+## [1.7.7](https://github.com/stevew1007/Mission-Runner-UI/compare/v1.7.6...v1.7.7) (2023-05-10)
+
+
+### Bug Fixes
+
+* populate missionschema to running and complete page ([611d92d](https://github.com/stevew1007/Mission-Runner-UI/commit/611d92dfdadedb4d2e862c9d7fddaa31c4dfa974))
+
 ## [1.7.6](https://github.com/stevew1007/Mission-Runner-UI/compare/v1.7.5...v1.7.6) (2023-05-10)
 
 
